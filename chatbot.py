@@ -1,18 +1,20 @@
-"""Chatbot Argo (IA): rota /api/chat, integração com a API do Claude e uso da persona."""
+"""Chatbot Argo (IA): rota /api/chat, integração com a API da Groq (plano gratuito) e uso da persona."""
+import json
 import os
 import sqlite3
 import time
+import urllib.error
+import urllib.request
 from collections import defaultdict, deque
 
-import anthropic
 from dotenv import load_dotenv
 from flask import Blueprint, current_app, jsonify, request
 
 from persona import PERSONA
 
 load_dotenv()
-MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5")
-client = anthropic.Anthropic()  # lê ANTHROPIC_API_KEY do ambiente (.env)
+MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+GROQ_URL = os.getenv("GROQ_URL", "https://api.groq.com/openai/v1/chat/completions")
 
 chatbot_bp = Blueprint("chatbot", __name__)
 
@@ -46,6 +48,34 @@ def catalogo_texto():
     return "\n".join(linhas)
 
 
+def perguntar(mensagens):
+    """Chama a API da Groq (formato OpenAI) usando só a biblioteca padrão."""
+    chave = os.getenv("GROQ_API_KEY", "").strip()
+    if not chave:
+        raise RuntimeError("GROQ_API_KEY ausente")
+    corpo = {
+        "model": MODEL,
+        "messages": mensagens,
+        "max_completion_tokens": 800,  # modelos gpt-oss "pensam" antes de responder; precisa de folga
+        "reasoning_effort": "low",
+    }
+    req = urllib.request.Request(
+        GROQ_URL,
+        data=json.dumps(corpo).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {chave}",
+            "User-Agent": "argos-chatbot/1.0",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        dados = json.load(r)
+    texto = (dados["choices"][0]["message"].get("content") or "").strip()
+    if not texto:
+        raise RuntimeError("resposta vazia")
+    return texto
+
+
 @chatbot_bp.post("/api/chat")
 def chat():
     if excedeu_limite(request.remote_addr):
@@ -65,13 +95,12 @@ def chat():
         hist.pop(0)
 
     try:
-        resp = client.messages.create(
-            model=MODEL,
-            max_tokens=400,
-            system=f"{PERSONA}\n\nCatálogo atual:\n{catalogo_texto()}",
-            messages=hist + [{"role": "user", "content": msg}],
+        resposta = perguntar(
+            [{"role": "system", "content": f"{PERSONA}\n\nCatálogo atual:\n{catalogo_texto()}"}]
+            + hist
+            + [{"role": "user", "content": msg}]
         )
-        return jsonify(resposta=resp.content[0].text)
+        return jsonify(resposta=resposta)
     except Exception as e:  # chave ausente, limite da API, falta de internet...
         current_app.logger.error("Falha no chat: %s", e)
         return jsonify(erro="O Argo está indisponível agora. Tente de novo em instantes."), 502

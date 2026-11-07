@@ -45,3 +45,12 @@ static/          front end (index.html, css, js)
 requirements.txt dependências
 .env.example     modelo de variáveis (copie para .env)
 ```
+
+## Publicar na internet (Render, plano gratuito)
+1. Em https://render.com, entre com sua conta do GitHub.
+2. **New → Blueprint** e escolha este repositório (o `render.yaml` configura tudo).
+3. Quando pedir, informe a variável `ANTHROPIC_API_KEY` com sua chave real (ela fica só no painel do Render, nunca no GitHub).
+4. Aguarde o deploy; o Render dá um endereço `https://argos-xxxx.onrender.com` que abre em qualquer computador.
+
+Observações do plano gratuito: o site "dorme" após alguns minutos sem acesso (o primeiro acesso demora ~1 min) e o disco é temporário, então `argos.db` é recriado a cada deploy/reinício (pedidos e mensagens de contato não são preservados). Para guardar dados de verdade, use um disco persistente (plano pago) ou um banco externo.
+O chat tem limite por IP (padrão 20 mensagens a cada 10 min; ajuste com `CHAT_LIMITE`) para proteger sua cota da API.

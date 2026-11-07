@@ -1,6 +1,8 @@
 """Chatbot Argo (IA): rota /api/chat, integração com a API do Claude e uso da persona."""
 import os
 import sqlite3
+import time
+from collections import defaultdict, deque
 
 import anthropic
 from dotenv import load_dotenv
@@ -13,6 +15,22 @@ MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 client = anthropic.Anthropic()  # lê ANTHROPIC_API_KEY do ambiente (.env)
 
 chatbot_bp = Blueprint("chatbot", __name__)
+
+# Limite por IP: evita que um visitante gaste sua cota da API (padrão: 20 mensagens / 10 min)
+LIMITE = int(os.getenv("CHAT_LIMITE", "20"))
+JANELA = 600
+_acessos = defaultdict(deque)
+
+
+def excedeu_limite(ip):
+    agora = time.time()
+    fila = _acessos[ip]
+    while fila and agora - fila[0] > JANELA:
+        fila.popleft()
+    if len(fila) >= LIMITE:
+        return True
+    fila.append(agora)
+    return False
 
 
 def catalogo_texto():
@@ -30,6 +48,8 @@ def catalogo_texto():
 
 @chatbot_bp.post("/api/chat")
 def chat():
+    if excedeu_limite(request.remote_addr):
+        return jsonify(erro="Muitas mensagens em pouco tempo. Tente de novo em alguns minutos."), 429
     d = request.get_json(silent=True) or {}
     msg = str(d.get("mensagem", "")).strip()
     if not msg or len(msg) > 500:

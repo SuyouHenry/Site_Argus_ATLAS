@@ -5,6 +5,7 @@ import sqlite3
 from dotenv import load_dotenv
 from flask import Flask, g, jsonify, request
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from chatbot import chatbot_bp  # chatbot de IA (parte do Gustavo)
 
@@ -13,6 +14,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE, "argos.db")
 
 app = Flask(__name__, static_folder="static", static_url_path="")
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)  # atrás do proxy da hospedagem
 CORS(app)
 app.config["DB_PATH"] = DB_PATH
 app.register_blueprint(chatbot_bp)

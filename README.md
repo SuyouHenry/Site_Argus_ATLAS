@@ -7,7 +7,7 @@ Trabalho da 3ª avaliação (AV3) da disciplina **Desenvolvimento Web para IA**,
 > Os produtos, os preços e a empresa são **fictícios**, criados para contextualizar o trabalho.
 
 ## 🔗 Link do Site
-Acesse o site aqui: _(preencher com o endereço do Render, por exemplo `https://argos-xxxx.onrender.com`)_
+Acesse o site aqui: **https://argos-bzkk.onrender.com**
 
 No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso pode levar cerca de 1 minuto.
 

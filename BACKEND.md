@@ -1,13 +1,13 @@
 # ARGOS · Back end
 
-API em Flask com banco SQLite e o assistente de IA **Argo** (Claude, da Anthropic).
+API em Flask com banco SQLite e o assistente de IA **Argo** (IA da Groq, com plano gratuito).
 
 ## Como rodar
 ```bash
 python -m venv venv
 venv\Scripts\activate          # Windows  (Linux/Mac: source venv/bin/activate)
 pip install -r requirements.txt
-copy .env.example .env         # Linux/Mac: cp .env.example .env  → coloque sua ANTHROPIC_API_KEY
+copy .env.example .env         # Linux/Mac: cp .env.example .env  → coloque sua GROQ_API_KEY
 python app.py
 ```
 Abra http://localhost:5000 (o Flask também serve o site da pasta `static/`).
@@ -21,7 +21,7 @@ Abra http://localhost:5000 (o Flask também serve o site da pasta `static/`).
 | POST | `/api/chat` | `mensagem`, `historico:[{role,content}]` | `{resposta}` |
 
 ## Integração com IA
-A rota `/api/chat` (em `chatbot.py`) envia a mensagem para a API do Claude com um *system prompt* (`persona.py`) que define a persona **Argo**, as regras de escopo e o catálogo atual lido do banco. Assim o assistente só fala da ARGOS e do A.T.L.A.S. e recusa assuntos fora do contexto. A chave fica só no servidor (`.env`), nunca no navegador.
+A rota `/api/chat` (em `chatbot.py`) envia a mensagem para a API da Groq com um *system prompt* (`persona.py`) que define a persona **Argo**, as regras de escopo e o catálogo atual lido do banco. Assim o assistente só fala da ARGOS e do A.T.L.A.S. e recusa assuntos fora do contexto. A chave fica só no servidor (`.env`), nunca no navegador.
 
 ## Exemplo para o front end
 ```js
@@ -49,8 +49,8 @@ requirements.txt dependências
 ## Publicar na internet (Render, plano gratuito)
 1. Em https://render.com, entre com sua conta do GitHub.
 2. **New → Blueprint** e escolha este repositório (o `render.yaml` configura tudo).
-3. Quando pedir, informe a variável `ANTHROPIC_API_KEY` com sua chave real (ela fica só no painel do Render, nunca no GitHub).
+3. Quando pedir, informe a variável `GROQ_API_KEY` com sua chave da Groq, gratuita em https://console.groq.com/keys (ela fica só no painel do Render, nunca no GitHub).
 4. Aguarde o deploy; o Render dá um endereço `https://argos-xxxx.onrender.com` que abre em qualquer computador.
 
 Observações do plano gratuito: o site "dorme" após alguns minutos sem acesso (o primeiro acesso demora ~1 min) e o disco é temporário, então `argos.db` é recriado a cada deploy/reinício (pedidos e mensagens de contato não são preservados). Para guardar dados de verdade, use um disco persistente (plano pago) ou um banco externo.
-O chat tem limite por IP (padrão 20 mensagens a cada 10 min; ajuste com `CHAT_LIMITE`) para proteger sua cota da API.
+O chat tem limite por IP (padrão 20 mensagens a cada 10 min; ajuste com `CHAT_LIMITE`) para proteger sua cota gratuita da API.

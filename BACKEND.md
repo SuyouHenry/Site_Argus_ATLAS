@@ -11,6 +11,7 @@ copy .env.example .env         # Linux/Mac: cp .env.example .env  → coloque su
 python app.py
 ```
 Abra http://localhost:5000 (o Flask também serve o site da pasta `static/`).
+Por padrão o servidor só aceita acessos do próprio computador. Para aceitar acessos da rede/hospedagem, defina `ARGOS_HOST=0.0.0.0` (e `PORT`, se quiser outra porta).
 
 ## Rotas
 | Método | Rota | Corpo (JSON) | Resposta |

@@ -126,4 +126,5 @@ def pedidos():
 init_db()
 
 if __name__ == "__main__":
-        app.run(host="0.0.0.0", port=5000)
+    # Local por padrão (127.0.0.1). Para hospedar/aceitar acessos da rede: ARGOS_HOST=0.0.0.0
+    app.run(host=os.getenv("ARGOS_HOST", "127.0.0.1"), port=int(os.getenv("PORT", "5000")))

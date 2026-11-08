@@ -536,5 +536,189 @@
     <script src="script.js"></script>
     <script src="camera.js"></script>
     <script src="chat.js"></script>
+    <style>
+  :root {
+    --auth-cor: #1f5f8b;
+    --auth-cor-texto: #ffffff;
+    --auth-fundo: #ffffff;
+    --auth-texto: #1d2733;
+    --auth-borda: #c9d3dd;
+    --auth-erro: #b3261e;
+  }
+
+  .auth-bar {
+    position: fixed; top: 12px; right: 12px; z-index: 1000;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 10px;
+    background: var(--auth-fundo); color: var(--auth-texto);
+    border: 1px solid var(--auth-borda);
+    font: 500 14px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .auth-bar span { padding: 0 4px; }
+
+  .auth-btn {
+    font: inherit; cursor: pointer;
+    padding: 8px 14px; border-radius: 8px;
+    border: 1px solid var(--auth-cor); background: transparent; color: var(--auth-cor);
+  }
+  .auth-btn-principal { background: var(--auth-cor); color: var(--auth-cor-texto); }
+  .auth-btn:focus-visible, #auth-dialog input:focus-visible, .auth-aba:focus-visible {
+    outline: 3px solid var(--auth-cor); outline-offset: 2px;
+  }
+
+  #auth-dialog {
+    width: min(92vw, 380px); padding: 20px; border-radius: 12px;
+    border: 1px solid var(--auth-borda);
+    background: var(--auth-fundo); color: var(--auth-texto);
+    font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  #auth-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+  #auth-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+
+  .auth-abas { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--auth-borda); }
+  .auth-aba {
+    font: inherit; cursor: pointer; padding: 8px 12px; background: none; border: 0;
+    border-bottom: 3px solid transparent; color: inherit;
+  }
+  .auth-aba[aria-selected="true"] { border-bottom-color: var(--auth-cor); font-weight: 600; }
+
+  #auth-dialog label { display: block; margin-bottom: 12px; }
+  #auth-dialog input {
+    display: block; width: 100%; box-sizing: border-box; margin-top: 4px;
+    padding: 9px 10px; font: inherit; color: inherit; background: var(--auth-fundo);
+    border: 1px solid var(--auth-borda); border-radius: 8px;
+  }
+  #auth-erro { min-height: 1.4em; margin: 0 0 8px; color: var(--auth-erro); }
+  .auth-acoes { display: flex; justify-content: flex-end; gap: 8px; }
+  .auth-btn:disabled { opacity: 0.6; cursor: wait; }
+</style>
+
+<div class="auth-bar" id="auth-bar" aria-label="Conta"></div>
+
+<dialog id="auth-dialog" aria-labelledby="auth-titulo">
+  <div class="auth-abas" role="tablist">
+    <button type="button" class="auth-aba" role="tab" data-aba="login">Entrar</button>
+    <button type="button" class="auth-aba" role="tab" data-aba="cadastro">Criar conta</button>
+  </div>
+  <h2 id="auth-titulo"></h2>
+  <form id="auth-form" novalidate>
+    <label id="auth-nome-label">Nome
+      <input id="auth-nome" type="text" maxlength="100" autocomplete="name">
+    </label>
+    <label>E-mail
+      <input id="auth-email" type="email" maxlength="120" autocomplete="email" required>
+    </label>
+    <label>Senha
+      <input id="auth-senha" type="password" minlength="8" maxlength="72" required>
+    </label>
+    <p id="auth-erro" role="alert"></p>
+    <div class="auth-acoes">
+      <button type="button" class="auth-btn" id="auth-cancelar">Cancelar</button>
+      <button type="submit" class="auth-btn auth-btn-principal" id="auth-enviar"></button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  const barra = document.getElementById("auth-bar");
+  const dlg = document.getElementById("auth-dialog");
+  const form = document.getElementById("auth-form");
+  const titulo = document.getElementById("auth-titulo");
+  const nomeLabel = document.getElementById("auth-nome-label");
+  const nome = document.getElementById("auth-nome");
+  const email = document.getElementById("auth-email");
+  const senha = document.getElementById("auth-senha");
+  const erroEl = document.getElementById("auth-erro");
+  const enviar = document.getElementById("auth-enviar");
+  let aba = "login";
+
+  async function api(url, corpo) {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(corpo || {}),
+    });
+    const dados = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(dados.erro || "Algo deu errado. Tente de novo.");
+    return dados;
+  }
+
+  function botao(texto, classe, aoClicar) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = classe;
+    b.textContent = texto;
+    b.addEventListener("click", aoClicar);
+    return b;
+  }
+
+  function desenharBarra(usuario) {
+    barra.replaceChildren();
+    if (usuario) {
+      const ola = document.createElement("span");
+      ola.textContent = "Olá, " + usuario.nome.split(" ")[0];
+      barra.append(ola, botao("Sair", "auth-btn", async () => {
+        try { await api("/api/logout"); } finally { desenharBarra(null); }
+      }));
+    } else {
+      barra.append(
+        botao("Entrar", "auth-btn", () => abrir("login")),
+        botao("Criar conta", "auth-btn auth-btn-principal", () => abrir("cadastro"))
+      );
+    }
+  }
+
+  function abrir(qual) {
+    aba = qual;
+    const cadastro = qual === "cadastro";
+    titulo.textContent = cadastro ? "Criar conta" : "Entrar";
+    enviar.textContent = cadastro ? "Criar conta" : "Entrar";
+    nomeLabel.hidden = !cadastro;
+    nome.required = cadastro;
+    senha.autocomplete = cadastro ? "new-password" : "current-password";
+    erroEl.textContent = "";
+    dlg.querySelectorAll(".auth-aba").forEach((b) =>
+      b.setAttribute("aria-selected", String(b.dataset.aba === qual)));
+    if (!dlg.open) dlg.showModal();
+    (cadastro ? nome : email).focus();
+  }
+
+  dlg.querySelectorAll(".auth-aba").forEach((b) =>
+    b.addEventListener("click", () => abrir(b.dataset.aba)));
+  document.getElementById("auth-cancelar").addEventListener("click", () => dlg.close());
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    erroEl.textContent = "";
+    if (!form.checkValidity()) {
+      erroEl.textContent = aba === "cadastro"
+        ? "Preencha nome, e-mail e uma senha de 8 a 72 caracteres."
+        : "Preencha e-mail e senha.";
+      return;
+    }
+    enviar.disabled = true;
+    const credenciais = { email: email.value, senha: senha.value };
+    try {
+      if (aba === "cadastro") {
+        await api("/api/cadastro", { nome: nome.value, ...credenciais });
+      }
+      const r = await api("/api/login", credenciais);
+      desenharBarra(r.usuario);
+      form.reset();
+      dlg.close();
+    } catch (err) {
+      erroEl.textContent = err.message;
+    } finally {
+      enviar.disabled = false;
+    }
+  });
+
+  fetch("/api/eu")
+    .then((r) => r.json())
+    .then((d) => desenharBarra(d.usuario))
+    .catch(() => desenharBarra(null));
+})();
+</script>
   </body>
 </html>

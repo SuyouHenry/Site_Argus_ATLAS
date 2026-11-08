@@ -426,16 +426,21 @@
       </button>
       <section class="chat argo-panel" id="chatBox" aria-labelledby="chatTitle" aria-hidden="true" inert>
         <header class="argo-header">
-          <button
-            class="argo-mark"
-            id="argoAvatar"
-            type="button"
-            aria-label="Interagir com o avatar do Arg&ocirc;"
-          >
-            <img src="argo-avatar.png" alt="Avatar do Arg&ocirc;" />
-          </button>
+          <div class="argo-avatar-anchor">
+            <button
+              class="argo-mark"
+              id="argoAvatar"
+              type="button"
+              aria-label="Interagir com o avatar do Arg&ocirc;"
+            >
+              <img src="argo-avatar.png" alt="Avatar do Arg&ocirc;" />
+            </button>
+          </div>
           <div class="argo-heading">
-            <h2 id="chatTitle">Arg&ocirc; · A.T.L.A.S.</h2>
+            <div class="argo-heading-title">
+              <h2 id="chatTitle">Arg&ocirc; · A.T.L.A.S.</h2>
+              <div class="argo-avatar-reaction" id="argoAvatarReaction" aria-hidden="true"></div>
+            </div>
             <p>Assistente virtual</p>
           </div>
           <button
@@ -492,7 +497,10 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
             </button>
           </form>
-          <p class="argo-note">O Arg&ocirc; pode cometer erros. <br> Em caso de dúvidas, consulte nossa equipe.</p>
+          <p class="argo-note">
+            <span>O Arg&ocirc; pode cometer erros.</span>
+            <span>Em caso de dúvidas, consulte nossa equipe.</span>
+          </p>
         </div>
       </section>
     </section>

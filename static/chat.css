@@ -192,7 +192,7 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   flex-direction: column;
   width: min(360px, calc(100vw - 36px));
   height: min(570px, calc(100dvh - 52px));
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid #e8e8f0;
   border-radius: 23px;
   background: var(--argo-paper);
@@ -226,7 +226,7 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
 }
 
 .argo-header {
-  position: static;
+  position: relative;
   top: auto;
   z-index: auto;
   flex: none;
@@ -238,7 +238,15 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   color: #fff;
   background: var(--argo-blue);
   border: 0;
+  border-radius: 22px 22px 0 0;
   backdrop-filter: none;
+}
+
+.argo-avatar-anchor {
+  position: relative;
+  flex: none;
+  width: 37px;
+  height: 37px;
 }
 
 .argo-mark {
@@ -264,9 +272,17 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   object-fit: contain;
 }
 
-.argo-mark.is-reacting img {
+.argo-mark.is-reacting img,
+.argo-mark.is-reacting-on-open img {
   animation: argo-avatar-tap 420ms cubic-bezier(0.3, 0.1, 0.3, 1);
   transform-origin: 50% 88%;
+}
+
+.argo-mark.is-reacting-on-open img {
+  --argo-avatar-tilt-in: -3deg;
+  --argo-avatar-tilt-out: 2deg;
+  --argo-avatar-tilt-return: -1deg;
+  animation-duration: 260ms;
 }
 
 @keyframes argo-avatar-tap {
@@ -275,13 +291,13 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
     transform: rotate(0deg) translateY(0);
   }
   24% {
-    transform: rotate(-7deg) translateY(-1px);
+    transform: rotate(var(--argo-avatar-tilt-in, -7deg)) translateY(-1px);
   }
   48% {
-    transform: rotate(5deg) translateY(-2px);
+    transform: rotate(var(--argo-avatar-tilt-out, 5deg)) translateY(-2px);
   }
   72% {
-    transform: rotate(-2deg) translateY(0);
+    transform: rotate(var(--argo-avatar-tilt-return, -2deg)) translateY(0);
   }
 }
 
@@ -290,6 +306,12 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   flex: 1;
   display: grid;
   gap: 1px;
+}
+
+.argo-heading-title {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .argo-heading h2 {
@@ -306,6 +328,55 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   color: #e1e4ff;
   font-size: 12px;
   line-height: 1.3;
+}
+
+.argo-avatar-reaction {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: -62px;
+  bottom: calc(100% + 7px);
+  width: fit-content;
+  max-width: min(calc(100% + 62px), calc(100vw - 64px));
+  padding: 7px 10px;
+  border: 1px solid #e5e7f0;
+  border-radius: 12px;
+  color: var(--argo-blue-dark);
+  background: #fff;
+  box-shadow: 0 4px 12px #17203320;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: left;
+  overflow-wrap: break-word;
+  animation: argo-avatar-reaction-in 180ms ease-out both;
+}
+
+.argo-avatar-reaction::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 30px;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  border-right: 1px solid #e5e7f0;
+  border-bottom: 1px solid #e5e7f0;
+  background: #fff;
+}
+
+.argo-widget.has-avatar-reaction .argo-avatar-reaction {
+  display: block;
+}
+
+@keyframes argo-avatar-reaction-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .argo-expand {
@@ -565,15 +636,33 @@ html.keyboard-nav .argo-welcome-actions button:focus-visible {
   flex: none;
   padding: 12px 15px 11px;
   border-top: 1px solid #eeeef4;
+  border-radius: 0 0 22px 22px;
   background: #fff;
 }
 
 .argo-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   margin: 7px 2px 0;
   color: var(--argo-muted);
   font-size: 10.5px;
   line-height: 1.35;
   text-align: center;
+}
+
+.argo-widget.is-expanded .argo-note {
+  display: block;
+}
+
+.argo-widget.is-expanded .argo-note span {
+  display: inline;
+}
+
+.argo-widget.is-expanded .argo-note span + span::before {
+  content: "· ";
+  margin-left: 0.45em;
 }
 
 .argo-suggestions {
@@ -731,6 +820,11 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
     border: 0;
     border-radius: 0;
     transform: translateY(12px);
+  }
+
+  .argo-header,
+  .argo-compose-area {
+    border-radius: 0;
   }
 
   .argo-widget.is-open .argo-panel {

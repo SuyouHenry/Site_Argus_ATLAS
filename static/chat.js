@@ -9,6 +9,7 @@
   const closeButton = document.getElementById("chatClose");
   const expandButton = document.getElementById("chatExpand");
   const avatarButton = document.getElementById("argoAvatar");
+  const avatarReaction = document.getElementById("argoAvatarReaction");
   const panel = document.getElementById("chatBox");
   const messages = document.getElementById("chatLog");
   const form = document.getElementById("chatForm");
@@ -16,12 +17,50 @@
   const sendButton = form.querySelector(".argo-send");
   const apresentacaoInicial = messages.querySelector(".argo-message--assistant");
   const sugestoes = widget.querySelector(".argo-suggestions");
+  const frasesReacaoAvatar = [
+    "Estou por aqui!",
+    "Gostou de mim? 😄",
+    "O que vamos descobrir hoje?",
+    "Estou pronto para ajudar",
+    "Pode clicar, eu não mordo! 😅",
+    "É sempre bom receber uma visita! 😊",
+    "Vamos conhecer o A.T.L.A.S.?",
+    "Chamou? Estou na escuta!",
+    "Sou pequeno, mas tenho muito a contar!",
+  ];
+  const limiteCliquesAvatar = 4;
   const timeFormatter = new Intl.DateTimeFormat("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
   });
   let historico = [];
   let enviando = false;
+  let cliquesAvatar = 0;
+  let ultimaReacaoAvatar = null;
+  let temporizadorReacaoAvatar = null;
+
+  function ocultarReacaoAvatar() {
+    window.clearTimeout(temporizadorReacaoAvatar);
+    temporizadorReacaoAvatar = null;
+    widget.classList.remove("has-avatar-reaction");
+    avatarReaction.textContent = "";
+  }
+
+  function mostrarFalaAvatar(frase) {
+    avatarReaction.textContent = frase;
+    widget.classList.add("has-avatar-reaction");
+    window.clearTimeout(temporizadorReacaoAvatar);
+    temporizadorReacaoAvatar = window.setTimeout(ocultarReacaoAvatar, 3200);
+  }
+
+  function mostrarReacaoAvatar() {
+    const opcoes = frasesReacaoAvatar.filter(
+      (frase) => frase !== ultimaReacaoAvatar,
+    );
+    const frase = opcoes[Math.floor(Math.random() * opcoes.length)];
+    ultimaReacaoAvatar = frase;
+    mostrarFalaAvatar(frase);
+  }
 
   function atualizarNotificacao(pendente) {
     launcher.classList.toggle("has-notification", pendente);
@@ -46,9 +85,20 @@
     sendButton.disabled = input.value.trim().length === 0 || enviando;
   }
 
+  function animarAvatar(origem) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    avatarButton.classList.remove("is-reacting", "is-reacting-on-open");
+    void avatarButton.offsetWidth;
+    avatarButton.classList.add(
+      origem === "abertura" ? "is-reacting-on-open" : "is-reacting",
+    );
+  }
+
   function abrirWidget() {
     atualizarNotificacao(false);
     widget.classList.add("is-open");
+    animarAvatar("abertura");
     launcher.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
     panel.inert = false;
@@ -65,6 +115,7 @@
   }
 
   function fecharWidget(devolverFoco = true) {
+    ocultarReacaoAvatar();
     widget.classList.remove("is-open");
     widget.classList.remove("is-expanded");
     expandButton.setAttribute("aria-pressed", "false");
@@ -138,13 +189,17 @@
 
   launcher.addEventListener("click", abrirWidget);
   avatarButton.addEventListener("click", () => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    avatarButton.classList.remove("is-reacting");
-    void avatarButton.offsetWidth;
-    avatarButton.classList.add("is-reacting");
+    animarAvatar("clique");
+    cliquesAvatar += 1;
+    if (cliquesAvatar <= limiteCliquesAvatar) return;
+    if (cliquesAvatar === limiteCliquesAvatar + 1) {
+      mostrarFalaAvatar("Você me descobriu!");
+      return;
+    }
+    mostrarReacaoAvatar();
   });
   avatarButton.addEventListener("animationend", () => {
-    avatarButton.classList.remove("is-reacting");
+    avatarButton.classList.remove("is-reacting", "is-reacting-on-open");
   });
   closeButton.addEventListener("click", () => fecharWidget());
   expandButton.addEventListener("click", alternarExpansao);

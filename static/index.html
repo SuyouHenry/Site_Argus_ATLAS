@@ -591,6 +591,19 @@
   #auth-erro { min-height: 1.4em; margin: 0 0 8px; color: var(--auth-erro); }
   .auth-acoes { display: flex; justify-content: flex-end; gap: 8px; }
   .auth-btn:disabled { opacity: 0.6; cursor: wait; }
+   :root {
+  --auth-cor: #2b2f9e;
+  --auth-cor-texto: #ffffff;
+  --auth-fundo: #eef0f6;
+  --auth-texto: #14172b;
+  --auth-borda: #c8ccdc;
+}
+.auth-bar, #auth-dialog { font-family: inherit; }
+#auth-dialog {
+  position: fixed; top: 50%; left: 50%; margin: 0;
+  transform: translate(-50%, -50%);
+}
+#auth-dialog label[hidden] { display: none; }
 </style>
 
 <div class="auth-bar" id="auth-bar" aria-label="Conta"></div>

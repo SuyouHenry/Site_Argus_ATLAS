@@ -251,4 +251,3 @@ chatForm.addEventListener("submit", async (e) => {
     espera.textContent = err.message || "Não consegui responder agora.";
   }
 });
-gyyy

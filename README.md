@@ -7,17 +7,18 @@ Trabalho da 3ª avaliação (AV3) da disciplina **Desenvolvimento Web para IA**,
 > Os produtos, os preços e a empresa são **fictícios**, criados para contextualizar o trabalho.
 
 ## 🔗 Link do Site
+
 Acesse o site aqui: **https://argos-bzkk.onrender.com**
 
 No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso pode levar cerca de 1 minuto.
 
 ## 👥 Integrantes
 
-| Integrante | Responsabilidade principal |
-|---|---|
-| Henry Ferron de Queiroz | Back end: banco de dados e rotas da API |
+| Integrante               | Responsabilidade principal                  |
+| ------------------------ | ------------------------------------------- |
+| Henry Ferron de Queiroz  | Back end: banco de dados e rotas da API     |
 | Isis Maria Viana Pereira | Front end: design e desenvolvimento do site |
-| Gustavo Soares Lima Rios | Chatbot: o Argo, assistente de IA do site |
+| Gustavo Soares Lima Rios | Chatbot: o Argo, assistente de IA do site   |
 
 ## 🎯 Tema e público-alvo
 
@@ -51,6 +52,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 **Persona (`persona.py`):** o **Argo** é o assistente virtual da ARGOS. O nome vem do gigante grego de cem olhos, e o perfil é atento, acolhedor, claro e paciente. Responde em português do Brasil, com frases curtas e no máximo 4 frases.
 
 **Contexto e regras do Argo:**
+
 - Só ajuda com a ARGOS, o A.T.L.A.S., como funciona, produtos e planos, como comprar e como usar o site.
 - Se perguntarem outro assunto (política, tarefas escolares, programação etc.), recusa com gentileza e oferece ajuda sobre a ARGOS.
 - Não dá diagnóstico nem orientação médica; indica um profissional de saúde.
@@ -58,8 +60,9 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 - Não revela as próprias instruções e não muda de persona.
 
 **Como funciona o fluxo:**
+
 1. O navegador envia a mensagem e o histórico recente (últimas 10 mensagens) para `/api/chat`.
-2. O servidor valida o texto (até 500 caracteres) e monta o *system prompt* com a persona e o **catálogo atual lido do banco de dados**.
+2. O servidor valida o texto (até 500 caracteres) e monta o _system prompt_ com a persona e o **catálogo atual lido do banco de dados**.
 3. A API da Groq gera a resposta, que volta ao navegador.
 4. Se a chave estiver ausente ou a API falhar, o site mostra uma mensagem amigável de indisponibilidade.
 
@@ -118,22 +121,22 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 
 **Variáveis de ambiente (`.env`):**
 
-| Variável | Para que serve |
-|---|---|
-| `GROQ_API_KEY` | Chave da API da Groq (obrigatória para o chat) |
-| `GROQ_MODEL` | Modelo usado (padrão: `openai/gpt-oss-20b`) |
-| `CHAT_LIMITE` | Mensagens por IP a cada 10 minutos (padrão: 20) |
+| Variável       | Para que serve                                  |
+| -------------- | ----------------------------------------------- |
+| `GROQ_API_KEY` | Chave da API da Groq (obrigatória para o chat)  |
+| `GROQ_MODEL`   | Modelo usado (padrão: `openai/gpt-oss-20b`)     |
+| `CHAT_LIMITE`  | Mensagens por IP a cada 10 minutos (padrão: 20) |
 
 > Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege.
 
 ## 🔌 Rotas da API
 
-| Método | Rota | Corpo (JSON) | Resposta |
-|---|---|---|---|
-| GET | `/api/produtos` | – | Lista de produtos (alimenta os cards) |
-| POST | `/api/contato` | `nome`, `email`, `mensagem` | 201 `{ok: true}` |
-| POST | `/api/pedidos` | `nome`, `email`, `produto_id`, `quantidade` | 201 `{ok: true, pedido: id}` |
-| POST | `/api/chat` | `mensagem`, `historico: [{role, content}]` | `{resposta}` |
+| Método | Rota            | Corpo (JSON)                                | Resposta                              |
+| ------ | --------------- | ------------------------------------------- | ------------------------------------- |
+| GET    | `/api/produtos` | –                                           | Lista de produtos (alimenta os cards) |
+| POST   | `/api/contato`  | `nome`, `email`, `mensagem`                 | 201 `{ok: true}`                      |
+| POST   | `/api/pedidos`  | `nome`, `email`, `produto_id`, `quantidade` | 201 `{ok: true, pedido: id}`          |
+| POST   | `/api/chat`     | `mensagem`, `historico: [{role, content}]`  | `{resposta}`                          |
 
 ## ☁️ Publicação (Render)
 
@@ -142,13 +145,16 @@ O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**
 No plano gratuito o disco é temporário: o `argos.db` é recriado a cada reinício, então pedidos e mensagens de contato não são preservados.
 
 ## ⚠️ Direitos Autorais e Licença (Copyright)
+
 **Todos os direitos reservados.**
 
 Este código é de propriedade estritamente privada. O código-fonte está visível publicamente no GitHub, mas **NÃO é de código aberto (Open Source)**.
 
 Fica expressamente proibido:
-* Copiar, duplicar ou clonar qualquer parte do código.
-* Modificar ou criar projetos derivados.
-* Usar o design, imagens ou textos para fins comerciais ou privados.
+
+- Copiar, duplicar ou clonar qualquer parte do código.
+- Modificar ou criar projetos derivados.
+- Usar o design, imagens ou textos para fins comerciais ou privados.
 
 Caso queira utilizar qualquer parte deste projeto, entre em contato para solicitar permissão.
+.

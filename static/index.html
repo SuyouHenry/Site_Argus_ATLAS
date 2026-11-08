@@ -324,7 +324,7 @@
             <article class="card pessoa">
               <div class="avatar" aria-hidden="true">G</div>
               <h3>Gustavo Soares Lima Rios</h3>
-              <p>Chatbot: o Argo, assistente de IA do site.</p>
+              <p>Chatbot: o Arg&ocirc;, assistente de IA do site.</p>
             </article>
           </div>
         </div>
@@ -381,7 +381,7 @@
     <section class="argo-widget" aria-label="Assistência Argos">
       <div class="argo-help" id="chatHelp" role="tooltip">
         <span class="argo-help-mark" aria-hidden="true">✳</span>
-        <span><strong>Precisa de ajuda?</strong><small>Converse com o Argo</small></span>
+        <span><strong>Precisa de ajuda?</strong><small>Converse com o Arg&ocirc;</small></span>
       </div>
       <button
         class="btn chat-fab argo-launcher"
@@ -400,16 +400,17 @@
       </button>
       <section class="chat argo-panel" id="chatBox" aria-labelledby="chatTitle" aria-hidden="true" inert>
         <header class="argo-header">
-          <span class="argo-mark" aria-hidden="true">
-            <svg viewBox="0 0 34 34">
-              <circle cx="17" cy="17" r="14" fill="none" stroke="currentColor" stroke-width="2.5" />
-              <circle cx="17" cy="17" r="6.5" fill="#F2B134" stroke="currentColor" stroke-width="1.7" />
-              <circle cx="17" cy="17" r="2" fill="currentColor" />
-            </svg>
-          </span>
+          <button
+            class="argo-mark"
+            id="argoAvatar"
+            type="button"
+            aria-label="Interagir com o avatar do Arg&ocirc;"
+          >
+            <img src="argo-avatar.png" alt="Avatar do Arg&ocirc;" />
+          </button>
           <div class="argo-heading">
-            <h2 id="chatTitle">Assistência Argos</h2>
-            <p>Olá, eu sou o Argo</p>
+            <h2 id="chatTitle">Arg&ocirc; · A.T.L.A.S.</h2>
+            <p>Assistente virtual</p>
           </div>
           <button
             class="argo-expand"
@@ -439,12 +440,12 @@
         >
           <div class="argo-date"><span>Hoje</span></div>
           <article class="argo-message argo-message--assistant">
-            <p>Olá! Sou o Argo, assistente da ARGOS. Como posso ajudar?</p>
+            <p>Olá! Sou o Arg&ocirc;, assistente da ARGOS. Como posso ajudar?</p>
             <time data-chat-time></time>
           </article>
         </div>
         <div class="argo-compose-area">
-          <div class="argo-suggestions" aria-label="Sugestões de mensagem">
+          <div class="argo-suggestions" role="group" aria-label="Sugestões de mensagem" hidden>
             <button type="button" class="argo-chip">O que é o A.T.L.A.S.?</button>
             <button type="button" class="argo-chip">Como funciona?</button>
             <button type="button" class="argo-chip">Ver produtos</button>
@@ -465,6 +466,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
             </button>
           </form>
+          <p class="argo-note">O Arg&ocirc; pode cometer erros. Em caso de dúvidas, consulte nossa equipe.</p>
         </div>
       </section>
     </section>

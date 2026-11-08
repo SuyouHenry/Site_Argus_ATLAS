@@ -7,11 +7,14 @@
   const launcher = document.getElementById("chatBtn");
   const closeButton = document.getElementById("chatClose");
   const expandButton = document.getElementById("chatExpand");
+  const avatarButton = document.getElementById("argoAvatar");
   const panel = document.getElementById("chatBox");
   const messages = document.getElementById("chatLog");
   const form = document.getElementById("chatForm");
   const input = document.getElementById("chatIn");
   const sendButton = form.querySelector(".argo-send");
+  const apresentacaoInicial = messages.querySelector(".argo-message--assistant");
+  const sugestoes = widget.querySelector(".argo-suggestions");
   const timeFormatter = new Intl.DateTimeFormat("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -75,7 +78,62 @@
     return paragrafo;
   }
 
+  function prepararApresentacaoInicial() {
+    if (!apresentacaoInicial) return;
+
+    const texto = apresentacaoInicial.querySelector("p");
+    if (!texto || apresentacaoInicial.querySelector(".argo-welcome-actions")) return;
+
+    texto.textContent =
+      "Olá! Seja bem-vindo!\n\n" +
+      "Sou o Argô, assistente virtual do projeto. Estou aqui para ajudar você a conhecer o A.T.L.A.S., entender como funciona e descobrir nossas soluções.\n\n" +
+      "Que tal experimentar uma demonstração do reconhecimento de gestos? Você poderá conhecer um pouco da tecnologia na prática!";
+
+    const acoes = document.createElement("div");
+    acoes.className = "argo-welcome-actions";
+
+    const experimentar = document.createElement("button");
+    experimentar.type = "button";
+    experimentar.className = "argo-welcome-primary";
+    experimentar.textContent = "Sim, quero experimentar!";
+    experimentar.addEventListener("click", () => {
+      const demonstracao = document.getElementById("produto");
+      fecharWidget();
+      if (demonstracao) window.location.hash = demonstracao.id;
+    });
+
+    const continuar = document.createElement("button");
+    continuar.type = "button";
+    continuar.className = "argo-welcome-secondary";
+    continuar.textContent = "Agora não, preciso de outra coisa.";
+    continuar.addEventListener("click", () => {
+      apresentacaoInicial.remove();
+      const textoSugestoes = adicionarMensagem(
+        "assistant",
+        "Escolha um assunto para começarmos.",
+      );
+      const mensagemSugestoes = textoSugestoes.closest(".argo-message");
+      mensagemSugestoes.classList.add("argo-suggestion-message");
+      sugestoes.hidden = false;
+      mensagemSugestoes.insertBefore(sugestoes, mensagemSugestoes.querySelector("time"));
+      messages.scrollTop = messages.scrollHeight;
+      input.focus();
+    });
+
+    acoes.append(experimentar, continuar);
+    apresentacaoInicial.appendChild(acoes);
+  }
+
   launcher.addEventListener("click", abrirWidget);
+  avatarButton.addEventListener("click", () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    avatarButton.classList.remove("is-reacting");
+    void avatarButton.offsetWidth;
+    avatarButton.classList.add("is-reacting");
+  });
+  avatarButton.addEventListener("animationend", () => {
+    avatarButton.classList.remove("is-reacting");
+  });
   closeButton.addEventListener("click", () => fecharWidget());
   expandButton.addEventListener("click", alternarExpansao);
 
@@ -85,7 +143,12 @@
     }
   });
 
-  input.addEventListener("input", ajustarCampo);
+  input.addEventListener("input", () => {
+    if (input.value.trim() && apresentacaoInicial.isConnected) {
+      apresentacaoInicial.remove();
+    }
+    ajustarCampo();
+  });
   input.addEventListener("keydown", (evento) => {
     if (evento.key === "Enter" && !evento.shiftKey) {
       evento.preventDefault();
@@ -96,6 +159,7 @@
   widget.querySelectorAll(".argo-chip").forEach((botao) => {
     botao.addEventListener("click", () => {
       input.value = botao.textContent.trim();
+      botao.closest(".argo-suggestion-message")?.remove();
       ajustarCampo();
       input.focus();
     });
@@ -106,6 +170,7 @@
     const mensagem = input.value.trim();
     if (!mensagem || enviando) return;
 
+    if (apresentacaoInicial.isConnected) apresentacaoInicial.remove();
     adicionarMensagem("user", mensagem);
     input.value = "";
     enviando = true;
@@ -113,7 +178,7 @@
     ajustarCampo();
     const respostaPendente = adicionarMensagem(
       "assistant",
-      "Argo está preparando uma resposta",
+      "Argô está preparando uma resposta",
     );
     const mensagemPendente = respostaPendente.closest(".argo-message");
     respostaPendente.classList.add("argo-sr-only");
@@ -163,5 +228,7 @@
 
   const horarioInicial = messages.querySelector("[data-chat-time]");
   if (horarioInicial) atualizarHorario(horarioInicial);
+  sugestoes.hidden = true;
+  prepararApresentacaoInicial();
   ajustarCampo();
 })();

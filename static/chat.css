@@ -645,7 +645,9 @@ html.keyboard-nav .argo-welcome-actions button:focus-visible {
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  margin: 7px 2px 0;
+  width: 100%;
+  max-width: none;
+  margin: 7px 0 0;
   color: var(--argo-muted);
   font-size: 10.5px;
   line-height: 1.35;
@@ -660,8 +662,7 @@ html.keyboard-nav .argo-welcome-actions button:focus-visible {
   display: inline;
 }
 
-.argo-widget.is-expanded .argo-note span + span::before {
-  content: "· ";
+.argo-widget.is-expanded .argo-note span {
   margin-left: 0.45em;
 }
 
@@ -762,7 +763,8 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
   color: #fff;
   background: var(--argo-blue);
   cursor: pointer;
-  transition: background 0.16s ease, transform 0.16s ease, opacity 0.16s ease;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease,
+    opacity 0.16s ease;
 }
 
 .argo-send:disabled {
@@ -770,9 +772,12 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
   cursor: default;
 }
 
-.argo-send:not(:disabled):hover {
-  background: var(--argo-blue-dark);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .argo-send:not(:disabled):hover {
+    background: var(--amber);
+    color: var(--argo-blue);
+    transform: translateY(-2px);
+  }
 }
 
 .argo-send svg {
@@ -854,5 +859,9 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .argo-send:not(:disabled):hover {
+    transform: none;
   }
 }

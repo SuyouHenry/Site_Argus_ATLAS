@@ -40,12 +40,13 @@
   border-radius: 999px;
   padding: 0;
   color: #fff;
-  background: var(--argo-blue);
+  background: var(--amber);
   box-shadow: var(--shadow-2);
   cursor: pointer;
   font-weight: 700;
   transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
-    background 0.2s ease, box-shadow 0.2s ease, opacity 0.24s ease;
+    background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,  
+    opacity 0.24s ease;
 }
 
 .argo-launcher::after {
@@ -79,10 +80,18 @@
   }
 }
 
-.argo-launcher:hover {
-  background: var(--argo-blue-dark);
-  transform: translateY(-3px);
-  box-shadow: 0 13px 28px #20277c45;
+@media (hover: hover) {
+  .argo-launcher:not(:disabled):hover {
+    background: var(--argo-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 13px 28px #20277c45;
+  }
+
+  .argo-launcher:disabled:hover {
+    background: var(--amber);
+    transform: none;
+    box-shadow: var(--shadow-2);
+  }
 }
 
 html.keyboard-nav .argo-launcher:focus-visible,
@@ -92,10 +101,12 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   outline-offset: 2px;
 }
 
-.argo-launcher svg {
-  width: 30px;
-  height: 30px;
-  color: #fff;
+.argo-launcher-avatar {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .argo-launcher-label {
@@ -898,6 +909,10 @@ html.keyboard-nav .argo-compose textarea:focus-visible {
   }
 
   .argo-close:hover {
+    transform: none;
+  }
+
+  .argo-launcher:not(:disabled):hover {
     transform: none;
   }
 }

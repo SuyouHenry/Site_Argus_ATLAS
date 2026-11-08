@@ -536,74 +536,75 @@
     <script src="script.js"></script>
     <script src="camera.js"></script>
     <script src="chat.js"></script>
-    <style>
+ <style>
   :root {
-    --auth-cor: #1f5f8b;
+    --auth-cor: #3340C8;
+    --auth-cor-escura: #2933A6;
     --auth-cor-texto: #ffffff;
     --auth-fundo: #ffffff;
-    --auth-texto: #1d2733;
-    --auth-borda: #c9d3dd;
-    --auth-erro: #b3261e;
+    --auth-suave: #EEF2F7;
+    --auth-texto: #172033;
+    --auth-borda: #D5DCE8;
+    --auth-erro: #B3261E;
+    --auth-fonte: "Instrument Sans", system-ui, sans-serif;
+    --auth-fonte-titulo: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
   }
 
   .auth-bar {
     position: fixed; top: 12px; right: 12px; z-index: 1000;
     display: flex; align-items: center; gap: 8px;
-    padding: 6px 8px; border-radius: 10px;
+    padding: 6px; border-radius: 999px;
     background: var(--auth-fundo); color: var(--auth-texto);
     border: 1px solid var(--auth-borda);
-    font: 500 14px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 500 14px/1.2 var(--auth-fonte);
   }
-  .auth-bar span { padding: 0 4px; }
+  .auth-bar span { padding: 0 8px; }
 
   .auth-btn {
-    font: inherit; cursor: pointer;
-    padding: 8px 14px; border-radius: 8px;
-    border: 1px solid var(--auth-cor); background: transparent; color: var(--auth-cor);
+    font: 700 14px/1 var(--auth-fonte-titulo); cursor: pointer;
+    padding: 10px 16px; border-radius: 999px;
+    border: 2px solid var(--auth-cor); background: transparent; color: var(--auth-cor);
   }
+  .auth-btn:hover { background: var(--auth-suave); }
   .auth-btn-principal { background: var(--auth-cor); color: var(--auth-cor-texto); }
+  .auth-btn-principal:hover { background: var(--auth-cor-escura); }
   .auth-btn:focus-visible, #auth-dialog input:focus-visible, .auth-aba:focus-visible {
     outline: 3px solid var(--auth-cor); outline-offset: 2px;
   }
+  .auth-btn:disabled { opacity: 0.6; cursor: wait; }
 
   #auth-dialog {
-    width: min(92vw, 380px); padding: 20px; border-radius: 12px;
+    position: fixed; top: 50%; left: 50%; margin: 0;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 400px); max-height: 90vh; overflow: auto;
+    padding: 24px; border-radius: 20px; box-sizing: border-box;
     border: 1px solid var(--auth-borda);
     background: var(--auth-fundo); color: var(--auth-texto);
-    font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 400 15px/1.4 var(--auth-fonte);
   }
-  #auth-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
-  #auth-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+  #auth-dialog::backdrop { background: rgba(23, 32, 51, 0.55); }
+  #auth-dialog h2 {
+    margin: 0 0 14px; font: 800 24px/1.1 var(--auth-fonte-titulo); color: var(--auth-texto);
+  }
 
-  .auth-abas { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--auth-borda); }
+  .auth-abas { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--auth-borda); }
   .auth-aba {
-    font: inherit; cursor: pointer; padding: 8px 12px; background: none; border: 0;
-    border-bottom: 3px solid transparent; color: inherit;
+    font: 500 15px/1 var(--auth-fonte); cursor: pointer; padding: 10px 12px;
+    background: none; border: 0; border-bottom: 3px solid transparent; color: inherit;
   }
-  .auth-aba[aria-selected="true"] { border-bottom-color: var(--auth-cor); font-weight: 600; }
+  .auth-aba[aria-selected="true"] {
+    border-bottom-color: var(--auth-cor); color: var(--auth-cor); font-weight: 600;
+  }
 
-  #auth-dialog label { display: block; margin-bottom: 12px; }
+  #auth-dialog label { display: block; margin: 0 0 14px; font-weight: 500; }
+  #auth-dialog label[hidden] { display: none; }
   #auth-dialog input {
-    display: block; width: 100%; box-sizing: border-box; margin-top: 4px;
-    padding: 9px 10px; font: inherit; color: inherit; background: var(--auth-fundo);
-    border: 1px solid var(--auth-borda); border-radius: 8px;
+    display: block; width: 100%; box-sizing: border-box; margin-top: 6px;
+    padding: 10px 12px; font: 400 15px/1.2 var(--auth-fonte); color: var(--auth-texto);
+    background: var(--auth-fundo); border: 1px solid var(--auth-borda); border-radius: 12px;
   }
-  #auth-erro { min-height: 1.4em; margin: 0 0 8px; color: var(--auth-erro); }
+  #auth-erro { min-height: 1.4em; margin: 0 0 10px; color: var(--auth-erro); }
   .auth-acoes { display: flex; justify-content: flex-end; gap: 8px; }
-  .auth-btn:disabled { opacity: 0.6; cursor: wait; }
-   :root {
-  --auth-cor: #2b2f9e;
-  --auth-cor-texto: #ffffff;
-  --auth-fundo: #eef0f6;
-  --auth-texto: #14172b;
-  --auth-borda: #c8ccdc;
-}
-.auth-bar, #auth-dialog { font-family: inherit; }
-#auth-dialog {
-  position: fixed; top: 50%; left: 50%; margin: 0;
-  transform: translate(-50%, -50%);
-}
-#auth-dialog label[hidden] { display: none; }
 </style>
 
 <div class="auth-bar" id="auth-bar" aria-label="Conta"></div>

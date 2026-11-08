@@ -213,3 +213,4 @@ if (typeof module !== "undefined") module.exports = { classificarGesto };
   });
   window.addEventListener("pagehide", () => parar());
 })();
+nn

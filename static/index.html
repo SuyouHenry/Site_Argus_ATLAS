@@ -14,6 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="shortcut icon" type="image/svg+xml" href="argos-favicon.svg" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="chat.css" />
   </head>
@@ -396,7 +397,6 @@
           <circle cx="17" cy="17" r="6.5" fill="#F2B134" stroke="currentColor" stroke-width="1.7" />
           <circle cx="17" cy="17" r="2" fill="currentColor" />
         </svg>
-        <span class="argo-launcher-label">Argo</span>
       </button>
       <section class="chat argo-panel" id="chatBox" aria-labelledby="chatTitle" aria-hidden="true" inert>
         <header class="argo-header">
@@ -411,6 +411,20 @@
             <h2 id="chatTitle">Assistência Argos</h2>
             <p>Olá, eu sou o Argo</p>
           </div>
+          <button
+            class="argo-expand"
+            id="chatExpand"
+            type="button"
+            aria-label="Expandir chat"
+            aria-pressed="false"
+          >
+            <svg class="argo-expand-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 3h6v6M21 3l-7 7M3 21l7-7M3 15v6h6" />
+            </svg>
+            <svg class="argo-collapse-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m14 10 7-7M20 10h-6V4M3 21l7-7M4 14h6v6" />
+            </svg>
+          </button>
           <button class="argo-close" id="chatClose" type="button" aria-label="Fechar assistência">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
           </button>
@@ -431,9 +445,11 @@
         </div>
         <div class="argo-compose-area">
           <div class="argo-suggestions" aria-label="Sugestões de mensagem">
-            <button type="button" class="argo-chip">Conhecer o A.T.L.A.S.</button>
-            <button type="button" class="argo-chip">Como funciona a terapia?</button>
-            <button type="button" class="argo-chip">Falar com a equipe</button>
+            <button type="button" class="argo-chip">O que é o A.T.L.A.S.?</button>
+            <button type="button" class="argo-chip">Como funciona?</button>
+            <button type="button" class="argo-chip">Ver produtos</button>
+            <button type="button" class="argo-chip">Quais benefícios oferece?</button>
+            <button type="button" class="argo-chip">Como falo com a equipe?</button>
           </div>
           <form class="argo-compose" id="chatForm">
             <label class="argo-sr-only" for="chatIn">Sua mensagem</label>

@@ -6,6 +6,7 @@
   const widget = document.querySelector(".argo-widget");
   const launcher = document.getElementById("chatBtn");
   const closeButton = document.getElementById("chatClose");
+  const expandButton = document.getElementById("chatExpand");
   const panel = document.getElementById("chatBox");
   const messages = document.getElementById("chatLog");
   const form = document.getElementById("chatForm");
@@ -39,8 +40,20 @@
     window.requestAnimationFrame(() => input.focus());
   }
 
+  function alternarExpansao() {
+    const expandido = widget.classList.toggle("is-expanded");
+    expandButton.setAttribute("aria-pressed", String(expandido));
+    expandButton.setAttribute(
+      "aria-label",
+      expandido ? "Reduzir chat" : "Expandir chat",
+    );
+  }
+
   function fecharWidget(devolverFoco = true) {
     widget.classList.remove("is-open");
+    widget.classList.remove("is-expanded");
+    expandButton.setAttribute("aria-pressed", "false");
+    expandButton.setAttribute("aria-label", "Expandir chat");
     launcher.setAttribute("aria-expanded", "false");
     panel.setAttribute("aria-hidden", "true");
     panel.inert = true;
@@ -64,6 +77,7 @@
 
   launcher.addEventListener("click", abrirWidget);
   closeButton.addEventListener("click", () => fecharWidget());
+  expandButton.addEventListener("click", alternarExpansao);
 
   document.addEventListener("keydown", (evento) => {
     if (evento.key === "Escape" && widget.classList.contains("is-open")) {
@@ -97,7 +111,29 @@
     enviando = true;
     input.disabled = true;
     ajustarCampo();
-    const respostaPendente = adicionarMensagem("assistant", "...");
+    const respostaPendente = adicionarMensagem(
+      "assistant",
+      "Argo está preparando uma resposta",
+    );
+    const mensagemPendente = respostaPendente.closest(".argo-message");
+    respostaPendente.classList.add("argo-sr-only");
+    respostaPendente.setAttribute("role", "status");
+    mensagemPendente.classList.add("argo-thinking");
+    const indicador = document.createElement("span");
+    indicador.className = "argo-activity";
+    indicador.setAttribute("aria-hidden", "true");
+    for (let indice = 0; indice < 3; indice += 1) {
+      indicador.appendChild(document.createElement("i"));
+    }
+    mensagemPendente.appendChild(indicador);
+
+    function concluirResposta(texto) {
+      respostaPendente.classList.remove("argo-sr-only");
+      respostaPendente.removeAttribute("role");
+      respostaPendente.textContent = texto;
+      mensagemPendente.classList.remove("argo-thinking");
+      indicador.remove();
+    }
 
     try {
       const resposta = await fetch(API + "/api/chat", {
@@ -110,13 +146,13 @@
         throw new Error(dados.erro || "Não consegui responder agora.");
       }
 
-      respostaPendente.textContent = dados.resposta;
+      concluirResposta(dados.resposta);
       historico.push(
         { role: "user", content: mensagem },
         { role: "assistant", content: dados.resposta },
       );
     } catch (erro) {
-      respostaPendente.textContent = erro.message || "Não consegui responder agora.";
+      concluirResposta(erro.message || "Não consegui responder agora.");
     } finally {
       enviando = false;
       input.disabled = false;

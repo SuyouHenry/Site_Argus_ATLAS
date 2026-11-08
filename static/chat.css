@@ -429,12 +429,21 @@ html.keyboard-nav .argo-widget textarea:focus-visible {
   background: #ffffff12;
   color: #fff;
   cursor: pointer;
-  transition: background 0.16s ease, transform 0.16s ease;
+  transition: background 0.16s ease, border-color 0.16s ease,
+    color 0.16s ease, transform 0.16s ease;
 }
 
 .argo-close:hover {
   background: #ffffff28;
   transform: rotate(4deg);
+}
+
+@media (hover: hover) {
+  .argo-close:not(:disabled):hover {
+    border-color: var(--amber);
+    background: var(--amber);
+    color: var(--argo-blue-dark);
+  }
 }
 
 .argo-close svg {
@@ -554,6 +563,13 @@ html.keyboard-nav .argo-welcome-actions button:focus-visible {
 
 .argo-welcome-secondary:hover {
   background: #f1f2ff;
+}
+
+@media (hover: hover) {
+  .argo-welcome-secondary:not(:disabled):hover {
+    background: var(--amber-soft, #fff0c2);
+    color: var(--argo-blue-dark);
+  }
 }
 
 .argo-message time {
@@ -691,12 +707,20 @@ html.keyboard-nav .argo-welcome-actions button:focus-visible {
   cursor: pointer;
   font-size: 11px !important;
   line-height: 1.25;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .argo-chip:hover {
   border-color: #b9bbeb;
   background: #efefff;
+}
+
+@media (hover: hover) {
+  .argo-chip:not(:disabled):hover {
+    background: var(--amber-soft, #fff0c2);
+    color: var(--argo-blue-dark);
+  }
 }
 
 .argo-compose {
@@ -744,11 +768,15 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
 }
 
 .argo-compose textarea:focus {
-  outline: 0;
+  border: 0;
+  outline: none;
+  box-shadow: none;
 }
 
-.argo-compose textarea:focus-visible {
-  outline: 0;
+html.keyboard-nav .argo-compose textarea:focus-visible {
+  border: 0;
+  outline: none;
+  box-shadow: none;
 }
 
 .argo-send {
@@ -862,6 +890,14 @@ html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
   }
 
   .argo-send:not(:disabled):hover {
+    transform: none;
+  }
+
+  .argo-welcome-actions button:hover {
+    transform: none;
+  }
+
+  .argo-close:hover {
     transform: none;
   }
 }

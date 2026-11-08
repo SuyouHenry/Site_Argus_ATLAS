@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="chat.css" />
   </head>
   <body>
     <a class="skip" href="#conteudo">Ir para o conteúdo</a>
@@ -376,29 +377,84 @@
       <div class="wrap">© 2026 ARGOS. Projeto A.T.L.A.S. · Teresina, Piauí</div>
     </footer>
 
-    <button
-      class="btn chat-fab"
-      id="chatBtn"
-      aria-expanded="false"
-      aria-controls="chatBox"
-    >
-      Falar com o Argo
-    </button>
-    <div class="chat" id="chatBox" hidden>
-      <div id="chatLog" role="log" aria-live="polite"></div>
-      <form id="chatForm">
-        <input
-          id="chatIn"
-          placeholder="Digite sua pergunta"
-          maxlength="500"
-          autocomplete="off"
-          aria-label="Mensagem"
-        />
-        <button class="btn" type="submit">Enviar</button>
-      </form>
-    </div>
+    <section class="argo-widget" aria-label="Assistência Argos">
+      <div class="argo-help" id="chatHelp" role="tooltip">
+        <span class="argo-help-mark" aria-hidden="true">✳</span>
+        <span><strong>Precisa de ajuda?</strong><small>Converse com o Argo</small></span>
+      </div>
+      <button
+        class="btn chat-fab argo-launcher"
+        id="chatBtn"
+        type="button"
+        aria-label="Abrir Assistência Argos"
+        aria-describedby="chatHelp"
+        aria-expanded="false"
+        aria-controls="chatBox"
+      >
+        <svg viewBox="0 0 34 34" aria-hidden="true">
+          <circle cx="17" cy="17" r="14" fill="none" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="17" cy="17" r="6.5" fill="#F2B134" stroke="currentColor" stroke-width="1.7" />
+          <circle cx="17" cy="17" r="2" fill="currentColor" />
+        </svg>
+        <span class="argo-launcher-label">Argo</span>
+      </button>
+      <section class="chat argo-panel" id="chatBox" aria-labelledby="chatTitle" aria-hidden="true" inert>
+        <header class="argo-header">
+          <span class="argo-mark" aria-hidden="true">
+            <svg viewBox="0 0 34 34">
+              <circle cx="17" cy="17" r="14" fill="none" stroke="currentColor" stroke-width="2.5" />
+              <circle cx="17" cy="17" r="6.5" fill="#F2B134" stroke="currentColor" stroke-width="1.7" />
+              <circle cx="17" cy="17" r="2" fill="currentColor" />
+            </svg>
+          </span>
+          <div class="argo-heading">
+            <h2 id="chatTitle">Assistência Argos</h2>
+            <p>Olá, eu sou o Argo</p>
+          </div>
+          <button class="argo-close" id="chatClose" type="button" aria-label="Fechar assistência">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </header>
+        <div
+          class="argo-messages"
+          id="chatLog"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions text"
+          tabindex="0"
+        >
+          <div class="argo-date"><span>Hoje</span></div>
+          <article class="argo-message argo-message--assistant">
+            <p>Olá! Sou o Argo, assistente da ARGOS. Como posso ajudar?</p>
+            <time data-chat-time></time>
+          </article>
+        </div>
+        <div class="argo-compose-area">
+          <div class="argo-suggestions" aria-label="Sugestões de mensagem">
+            <button type="button" class="argo-chip">Conhecer o A.T.L.A.S.</button>
+            <button type="button" class="argo-chip">Como funciona a terapia?</button>
+            <button type="button" class="argo-chip">Falar com a equipe</button>
+          </div>
+          <form class="argo-compose" id="chatForm">
+            <label class="argo-sr-only" for="chatIn">Sua mensagem</label>
+            <textarea
+              id="chatIn"
+              rows="1"
+              maxlength="500"
+              placeholder="Escreva sua mensagem…"
+              aria-label="Escreva sua mensagem"
+              autocomplete="off"
+            ></textarea>
+            <button class="argo-send" type="submit" aria-label="Enviar mensagem" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+            </button>
+          </form>
+        </div>
+      </section>
+    </section>
 
     <script src="script.js"></script>
     <script src="camera.js"></script>
+    <script src="chat.js"></script>
   </body>
 </html>

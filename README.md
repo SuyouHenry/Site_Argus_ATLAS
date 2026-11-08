@@ -44,7 +44,7 @@ Principais funcionalidades
 - **Chat com o Argo:** assistente de IA para tirar dúvidas sobre a ARGOS, o A.T.L.A.S., os produtos e o uso do site.
 - **Acessibilidade e responsividade:** link "ir para o conteúdo", foco visível e layout que se adapta a telas pequenas.
 
-## 🤖 Integração com Inteligência Artificial
+Integração com Inteligência Artificial
 
 O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a conversa para a API da Groq. A chave da API fica **somente no servidor** (variável de ambiente `GROQ_API_KEY`), nunca no navegador.
 

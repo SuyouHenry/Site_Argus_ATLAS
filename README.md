@@ -6,13 +6,19 @@ Trabalho da 3ª avaliação (AV3) da disciplina **Desenvolvimento Web para IA**,
 
 > Os produtos, os preços e a empresa são **fictícios**, criados para contextualizar o trabalho.
 
+<<<<<<< HEAD
+
 ## 🔗 Link do Site
 
-Acesse o site aqui: **https://argos-bzkk.onrender.com**
+=======
+Link do Site
 
-No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso pode levar cerca de 1 minuto.
+> > > > > > > 09aa71d4f6f395b6b4cff611a8a424f32f1adb5a
+> > > > > > > Acesse o site aqui: **https://argos-bzkk.onrender.com**
 
-## 👥 Integrantes
+o primeiro acesso pode levar cerca de 1 minuto.
+
+Integrantes
 
 | Integrante               | Responsabilidade principal                  |
 | ------------------------ | ------------------------------------------- |
@@ -20,12 +26,12 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 | Isis Maria Viana Pereira | Front end: design e desenvolvimento do site |
 | Gustavo Soares Lima Rios | Chatbot: o Argo, assistente de IA do site   |
 
-## 🎯 Tema e público-alvo
+Tema e público-alvo
 
 - **Produto:** o A.T.L.A.S. (físico) e uma assinatura de relatórios de evolução motora gerados por IA (digital).
 - **Público-alvo:** clínicas, terapeutas e famílias que buscam uma terapia motora mais engajadora e mensurável.
 
-## 🛠️ Tecnologias Utilizadas
+Tecnologias Utilizadas
 
 - **Front end:** HTML5, CSS3 (`grid`, `flex`, layout responsivo) e JavaScript puro.
 - **Back end:** Python 3 com Flask e Flask-CORS.
@@ -35,7 +41,7 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 - **Hospedagem:** Render.
 - **Versionamento:** Git e GitHub.
 
-## ✨ Principais funcionalidades
+Principais funcionalidades
 
 - **Site com navegação funcional:** cabeçalho com logomarca, menu com as seções Sobre, A.T.L.A.S., Produtos, Equipe e Contato, e rodapé.
 - **Demonstração de gestos:** o visitante escolhe um gesto da mão e vê como o robô reage.
@@ -45,7 +51,7 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 - **Chat com o Argo:** assistente de IA para tirar dúvidas sobre a ARGOS, o A.T.L.A.S., os produtos e o uso do site.
 - **Acessibilidade e responsividade:** link "ir para o conteúdo", foco visível e layout que se adapta a telas pequenas.
 
-## 🤖 Integração com Inteligência Artificial
+Integração com Inteligência Artificial
 
 O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a conversa para a API da Groq. A chave da API fica **somente no servidor** (variável de ambiente `GROQ_API_KEY`), nunca no navegador.
 
@@ -70,7 +76,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 
 **Ferramentas de apoio:** o projeto foi desenvolvido com apoio de ferramentas de IA, e o grupo é capaz de explicar como o chatbot foi criado.
 
-## 📁 Estrutura de pastas
+Estrutura de pastas
 
 ```
 .
@@ -90,7 +96,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 
 O arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução, com os 3 produtos de demonstração.
 
-## 🚀 Instruções de instalação e execução
+Instruções de instalação e execução
 
 **Pré-requisitos:** Python 3.10 ou superior e Git.
 
@@ -129,7 +135,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 
 > Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege.
 
-## 🔌 Rotas da API
+Rotas da API
 
 | Método | Rota            | Corpo (JSON)                                | Resposta                              |
 | ------ | --------------- | ------------------------------------------- | ------------------------------------- |
@@ -138,7 +144,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | POST   | `/api/pedidos`  | `nome`, `email`, `produto_id`, `quantidade` | 201 `{ok: true, pedido: id}`          |
 | POST   | `/api/chat`     | `mensagem`, `historico: [{role, content}]`  | `{resposta}`                          |
 
-## ☁️ Publicação (Render)
+Publicação (Render)
 
 O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel. A cada mudança na branch `main`, o Render atualiza o site automaticamente. Mais detalhes em [BACKEND.md](BACKEND.md).
 

@@ -302,6 +302,38 @@
             <button class="btn" type="submit">Enviar pedido</button>
             <p id="okPedido" role="status"></p>
           </form>
+
+          <form id="cadastro" novalidate>
+            <h3>Criar cadastro</h3>
+            <label
+              >Nome<input
+                name="nome"
+                required
+                maxlength="100"
+                autocomplete="name"
+                placeholder="Seu nome"
+            /></label>
+            <label
+              >E-mail<input
+                type="email"
+                name="email"
+                required
+                maxlength="120"
+                autocomplete="email"
+                placeholder="seu@email.com"
+            /></label>
+            <label
+              >Senha (mínimo 8 caracteres)<input
+                type="password"
+                name="senha"
+                required
+                minlength="8"
+                maxlength="72"
+                autocomplete="new-password"
+            /></label>
+            <button class="btn" type="submit">Cadastrar</button>
+            <p id="okCadastro" role="status"></p>
+          </form>
         </div>
       </section>
 

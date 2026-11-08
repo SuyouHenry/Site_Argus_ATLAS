@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, g, jsonify, request
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import generate_password_hash
 
 from chatbot import chatbot_bp  # chatbot de IA (parte do Gustavo)
 
@@ -36,6 +37,13 @@ CREATE TABLE IF NOT EXISTS pedidos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   produto_id INTEGER NOT NULL REFERENCES produtos(id),
   nome TEXT NOT NULL, email TEXT NOT NULL, quantidade INTEGER NOT NULL,
+  criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,   -- UNIQUE: o banco impede e-mail repetido
+  senha_hash TEXT NOT NULL,     -- nunca a senha em texto puro
   criado_em TEXT DEFAULT CURRENT_TIMESTAMP
 );
 """
@@ -123,6 +131,28 @@ def pedidos():
     )
     db.commit()
     return jsonify(ok=True, pedido=cur.lastrowid), 201
+
+
+@app.post("/api/cadastro")
+def cadastro():
+    d = request.get_json(silent=True) or {}
+    nome = str(d.get("nome", "")).strip()
+    email = str(d.get("email", "")).strip().lower()
+    senha = str(d.get("senha", ""))
+    if not nome or len(nome) > 100 or not email_ok(email):
+        return erro("Informe nome e e-mail válido.")
+    if not 8 <= len(senha) <= 72:
+        return erro("A senha deve ter entre 8 e 72 caracteres.")
+    db = get_db()
+    try:
+        cur = db.execute(
+            "INSERT INTO usuarios (nome, email, senha_hash) VALUES (?,?,?)",
+            (nome, email, generate_password_hash(senha)),
+        )
+        db.commit()
+    except sqlite3.IntegrityError:
+        return erro("Este e-mail já está cadastrado.", 409)
+    return jsonify(ok=True, usuario=cur.lastrowid), 201
 
 
 init_db()

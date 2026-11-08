@@ -5,6 +5,7 @@
       : "";
   const widget = document.querySelector(".argo-widget");
   const launcher = document.getElementById("chatBtn");
+  const launcherLabel = launcher.getAttribute("aria-label");
   const closeButton = document.getElementById("chatClose");
   const expandButton = document.getElementById("chatExpand");
   const avatarButton = document.getElementById("argoAvatar");
@@ -22,6 +23,16 @@
   let historico = [];
   let enviando = false;
 
+  function atualizarNotificacao(pendente) {
+    launcher.classList.toggle("has-notification", pendente);
+    launcher.setAttribute(
+      "aria-label",
+      pendente
+        ? `${launcherLabel}, mensagem não visualizada`
+        : launcherLabel,
+    );
+  }
+
   function atualizarHorario(elemento) {
     const agora = new Date();
     elemento.dateTime = agora.toISOString();
@@ -36,6 +47,7 @@
   }
 
   function abrirWidget() {
+    atualizarNotificacao(false);
     widget.classList.add("is-open");
     launcher.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
@@ -212,6 +224,9 @@
       }
 
       concluirResposta(dados.resposta);
+      if (!widget.classList.contains("is-open")) {
+        atualizarNotificacao(true);
+      }
       historico.push(
         { role: "user", content: mensagem },
         { role: "assistant", content: dados.resposta },
@@ -227,6 +242,7 @@
   });
 
   const horarioInicial = messages.querySelector("[data-chat-time]");
+  atualizarNotificacao(true);
   if (horarioInicial) atualizarHorario(horarioInicial);
   sugestoes.hidden = true;
   prepararApresentacaoInicial();

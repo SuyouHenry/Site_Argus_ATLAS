@@ -48,17 +48,48 @@
     background 0.2s ease, box-shadow 0.2s ease, opacity 0.24s ease;
 }
 
+.argo-launcher::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #e14b56;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.65);
+}
+
+.argo-launcher.has-notification::after {
+  opacity: 1;
+  animation: argo-notification-in 0.2s ease-out both;
+}
+
+@keyframes argo-notification-in {
+  from {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .argo-launcher:hover {
   background: var(--argo-blue-dark);
   transform: translateY(-3px);
   box-shadow: 0 13px 28px #20277c45;
 }
 
-.argo-launcher:focus-visible,
-.argo-widget button:focus-visible,
-.argo-widget textarea:focus-visible {
-  outline: 3px solid #f2b134;
-  outline-offset: 3px;
+html.keyboard-nav .argo-launcher:focus-visible,
+html.keyboard-nav .argo-widget button:focus-visible,
+html.keyboard-nav .argo-widget textarea:focus-visible {
+  outline: 2px solid #f2b134;
+  outline-offset: 2px;
 }
 
 .argo-launcher svg {
@@ -431,8 +462,8 @@
   transform: translateY(-1px);
 }
 
-.argo-welcome-actions button:focus-visible {
-  outline: 3px solid #f2b134;
+html.keyboard-nav .argo-welcome-actions button:focus-visible {
+  outline: 2px solid #f2b134;
   outline-offset: 2px;
 }
 
@@ -595,6 +626,12 @@
   box-shadow: 0 0 0 3px #3340c810;
 }
 
+html.keyboard-nav .argo-compose:has(textarea:focus-visible) {
+  outline: 2px solid #f2b134;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
 .argo-compose textarea {
   display: block;
   flex: 1;
@@ -617,6 +654,10 @@
 }
 
 .argo-compose textarea:focus {
+  outline: 0;
+}
+
+.argo-compose textarea:focus-visible {
   outline: 0;
 }
 

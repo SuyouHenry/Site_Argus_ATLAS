@@ -57,10 +57,9 @@
       a {
         color: var(--blue);
       }
-      :focus-visible {
-        outline: 3px solid var(--amber);
-        outline-offset: 3px;
-        border-radius: 4px;
+      html.keyboard-nav :focus-visible {
+        outline: 2px solid var(--amber);
+        outline-offset: 2px;
       }
       .skip {
         position: absolute;
@@ -71,7 +70,7 @@
         padding: 0.5rem 1rem;
         z-index: 99;
       }
-      .skip:focus {
+      html.keyboard-nav .skip:focus-visible {
         left: 8px;
       }
       .wrap {
@@ -147,6 +146,10 @@
       }
       .btn:hover {
         background: var(--blue-d);
+      }
+      .btn:disabled,
+      .gestos button:disabled {
+        cursor: default;
       }
       .btn.alt {
         background: transparent;
@@ -425,10 +428,14 @@
         background: var(--mint);
         display: grid;
         place-items: center;
+        color: var(--ink);
+        text-decoration: none;
+        cursor: pointer;
         font-family: "Bricolage Grotesque", sans-serif;
         font-size: 2rem;
         font-weight: 800;
         margin: 0 auto 1rem;
+        transition: transform 160ms ease, box-shadow 160ms ease;
       }
       .pessoa p {
         margin-inline: auto;
@@ -458,8 +465,22 @@
       input:focus,
       textarea:focus {
         border-color: var(--blue);
-        outline: none;
         box-shadow: 0 0 0 3px rgba(51, 64, 200, 0.12);
+      }
+      html.keyboard-nav input:focus-visible,
+      html.keyboard-nav textarea:focus-visible {
+        outline: 2px solid var(--amber);
+        outline-offset: 2px;
+        box-shadow: none;
+      }
+      input:focus:not(:focus-visible),
+      textarea:focus:not(:focus-visible) {
+        outline: none;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #9297a5;
+        opacity: 1;
       }
       #ok {
         font-weight: 600;
@@ -499,6 +520,10 @@
           border-color: var(--blue);
           background: #f8f8ff;
         }
+        .avatar:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 0 3px rgba(51, 64, 200, 0.12);
+        }
       }
 
       @media (max-width: 820px) {
@@ -522,6 +547,7 @@
         .card,
         .steps li,
         .gestos button,
+        .avatar,
         input,
         textarea,
         select {
@@ -550,6 +576,41 @@
         border: 2px solid var(--line);
         background: var(--paper);
         color: var(--ink);
+      }
+      #pedido select {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        min-height: 48px;
+        padding: 0.7rem 2.75rem 0.7rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background-color: var(--paper);
+        background-image: linear-gradient(45deg, transparent 50%, var(--blue) 50%),
+          linear-gradient(135deg, var(--blue) 50%, transparent 50%);
+        background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+        background-repeat: no-repeat;
+        background-size: 5px 5px, 5px 5px;
+        color: var(--ink);
+        cursor: pointer;
+        transition: border-color 160ms ease, box-shadow 160ms ease;
+      }
+      #pedido select:hover {
+        border-color: #b8bfd0;
+      }
+      #pedido select:focus {
+        border-color: var(--blue);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(51, 64, 200, 0.12);
+      }
+      #pedido select option {
+        padding: 0.65rem 0.8rem;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      #pedido select option:checked {
+        background: #efefff;
+        color: var(--blue);
       }
       #listaProdutos {
         margin-bottom: 2.5rem;

@@ -57,7 +57,7 @@
       </div>
     </header>
 
-    <main id="conteudo">
+    <main id="conteudo" tabindex="-1">
       <section class="hero" id="inicio">
         <div class="wrap">
           <div>
@@ -288,6 +288,7 @@
                 required
                 maxlength="100"
                 autocomplete="name"
+                placeholder="Seu nome"
             /></label>
             <label
               >E-mail<input
@@ -296,6 +297,7 @@
                 required
                 maxlength="120"
                 autocomplete="email"
+                placeholder="seu@email.com"
             /></label>
             <button class="btn" type="submit">Enviar pedido</button>
             <p id="okPedido" role="status"></p>
@@ -312,19 +314,40 @@
           </p>
           <div class="grid">
             <article class="card pessoa">
-              <div class="avatar" aria-hidden="true">H</div>
+              <a
+                class="avatar"
+                href="https://github.com/SuyouHenry"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Perfil de GitHub de Suyou Henry, abre em nova aba"
+                >H</a
+              >
               <h3>Henry Ferron de Queiroz</h3>
               <p>Back end: banco de dados e rotas da API.</p>
             </article>
             <article class="card pessoa">
-              <div class="avatar" aria-hidden="true">I</div>
+              <a
+                class="avatar"
+                href="https://github.com/mariaisis08"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Perfil de GitHub de Maria Isis, abre em nova aba"
+                >I</a
+              >
               <h3>Isis Maria Viana Pereira</h3>
               <p>Front end: design e desenvolvimento do site.</p>
             </article>
             <article class="card pessoa">
-              <div class="avatar" aria-hidden="true">G</div>
+              <a
+                class="avatar"
+                href="https://github.com/Guganp-8012"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Perfil de GitHub de Gustavo Soares Lima Rios, abre em nova aba"
+                >G</a
+              >
               <h3>Gustavo Soares Lima Rios</h3>
-              <p>Chatbot: o Arg&ocirc;, assistente de IA do site.</p>
+              <p>Desenvolvimento do chatbot e revisão geral do projeto.</p>
             </article>
           </div>
         </div>
@@ -351,6 +374,7 @@
                 required
                 maxlength="100"
                 autocomplete="name"
+                placeholder="Seu nome"
             /></label>
             <label
               >E-mail<input
@@ -358,6 +382,7 @@
                 name="email"
                 required
                 autocomplete="email"
+                placeholder="seu@email.com"
             /></label>
             <label
               >Mensagem<textarea
@@ -365,6 +390,7 @@
                 rows="4"
                 maxlength="1000"
                 required
+                placeholder="Como podemos ajudar?"
               ></textarea>
             </label>
             <button class="btn" type="submit">Enviar mensagem</button>
@@ -466,7 +492,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
             </button>
           </form>
-          <p class="argo-note">O Arg&ocirc; pode cometer erros. Em caso de dúvidas, consulte nossa equipe.</p>
+          <p class="argo-note">O Arg&ocirc; pode cometer erros. <br> Em caso de dúvidas, consulte nossa equipe.</p>
         </div>
       </section>
     </section>

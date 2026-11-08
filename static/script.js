@@ -3,6 +3,15 @@ const API =
     ? "http://localhost:5000"
     : "";
 
+document.addEventListener("keydown", (evento) => {
+  if (evento.key === "Tab") {
+    document.documentElement.classList.add("keyboard-nav");
+  }
+});
+document.addEventListener("pointerdown", () => {
+  document.documentElement.classList.remove("keyboard-nav");
+});
+
 // mão com 21 pontos (estilo MediaPipe)
 const P = [
   [150, 310],

@@ -362,11 +362,44 @@
         transition: transform 0.4s ease;
       }
       .painel output {
+        color: var(--ink);
         display: block;
         font-family: "Bricolage Grotesque", sans-serif;
         font-size: 1.5rem;
         font-weight: 700;
         margin-top: 0.4rem;
+      }
+      .camera {
+        margin-top: 1.2rem;
+      }
+      .camera .btn[aria-pressed="true"] {
+        background: var(--amber);
+        border-color: var(--amber);
+        color: var(--ink);
+      }
+      #camStatus {
+        margin-top: 0.8rem;
+      }
+      .camvideo {
+        position: relative;
+        width: min(420px, 100%);
+        aspect-ratio: 4 / 3;
+        margin-top: 1rem;
+        border-radius: var(--r);
+        overflow: hidden;
+        background: #000;
+      }
+      .camvideo[hidden] {
+        display: none;
+      }
+      .camvideo video,
+      .camvideo canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1); /* efeito espelho */
       }
       .nota {
         font-size: 0.9rem;
@@ -706,39 +739,56 @@
           </ol>
 
           <h3 style="margin-top: 3rem">Teste um gesto</h3>
+          <div class="camera">
+            <button type="button" class="btn" id="camBtn" aria-pressed="false">
+              Ativar câmera
+            </button>
+            <p id="camStatus" role="status" aria-live="polite">
+              Opcional: ative a câmera e aponte o dedo indicador para cima,
+              direita, baixo ou esquerda. Ou use os botões abaixo.
+            </p>
+            <div class="camvideo" id="camBox" hidden>
+              <video id="camVideo" playsinline muted></video>
+              <canvas id="camCanvas"></canvas>
+            </div>
+            <p class="nota">
+              O vídeo é processado no seu próprio aparelho e não é enviado nem
+              gravado.
+            </p>
+          </div>
           <div class="demo">
             <div class="gestos" role="group" aria-label="Escolha um gesto">
               <button
                 type="button"
                 data-ang="0"
-                data-txt="Seguir em frente"
+                data-txt="Para cima: seguir em frente"
                 aria-pressed="true"
               >
-                Mão aberta
-              </button>
-              <button
-                type="button"
-                data-ang="180"
-                data-txt="Voltar"
-                aria-pressed="false"
-              >
-                Dois dedos
-              </button>
-              <button
-                type="button"
-                data-ang="-90"
-                data-txt="Virar à esquerda"
-                aria-pressed="false"
-              >
-                Indicador
+                ☝️ Indicador para cima
               </button>
               <button
                 type="button"
                 data-ang="90"
-                data-txt="Virar à direita"
+                data-txt="Para a direita: virar à direita"
                 aria-pressed="false"
               >
-                Polegar
+                👉 Indicador para a direita
+              </button>
+              <button
+                type="button"
+                data-ang="180"
+                data-txt="Para baixo: voltar"
+                aria-pressed="false"
+              >
+                👇 Indicador para baixo
+              </button>
+              <button
+                type="button"
+                data-ang="-90"
+                data-txt="Para a esquerda: virar à esquerda"
+                aria-pressed="false"
+              >
+                👈 Indicador para a esquerda
               </button>
             </div>
             <div class="painel">
@@ -755,11 +805,10 @@
                   <path
                     d="M60 22 L78 52 L66 52 L66 92 L54 92 L54 52 L42 52 Z"
                     fill="#3340C8"
-                    transform="rotate(90 60 60)"
                   />
                 </g>
               </svg>
-              <output id="saida" aria-live="polite">Seguir em frente</output>
+              <output id="saida" aria-live="polite">Para cima: seguir em frente</output>
             </div>
           </div>
           <p class="nota">
@@ -939,5 +988,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="camera.js"></script>
   </body>
 </html>

@@ -74,11 +74,14 @@ P.forEach(([x, y], i) => {
 const btns = document.querySelectorAll(".gestos button"),
   seta = document.getElementById("seta"),
   saida = document.getElementById("saida");
+let rotacao = 0; // gira sempre pelo caminho mais curto
 btns.forEach((b) =>
   b.addEventListener("click", () => {
     btns.forEach((x) => x.setAttribute("aria-pressed", "false"));
     b.setAttribute("aria-pressed", "true");
-    seta.style.transform = "rotate(" + b.dataset.ang + "deg)";
+    const dif = ((((Number(b.dataset.ang) - rotacao) % 360) + 540) % 360) - 180;
+    rotacao += dif;
+    seta.style.transform = "rotate(" + rotacao + "deg)";
     saida.textContent = b.dataset.txt;
   }),
 );

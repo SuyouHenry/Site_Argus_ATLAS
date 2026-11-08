@@ -29,7 +29,7 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 - **Front end:** HTML5, CSS3 (`grid`, `flex`, layout responsivo) e JavaScript puro.
 - **Back end:** Python 3 com Flask e Flask-CORS.
 - **Banco de dados:** SQLite.
-- **Inteligência Artificial:** API da Groq (modelo `openai/gpt-oss-20b`, plano gratuito).
+- **Inteligência Artificial:** API da Groq (modelo `openai/gpt-oss-20b`, plano gratuito) para o chat, e MediaPipe Hands (`@mediapipe/tasks-vision`) para o reconhecimento de gestos pela câmera.
 - **Servidor de produção:** Gunicorn.
 - **Hospedagem:** Render.
 - **Versionamento:** Git e GitHub.
@@ -37,7 +37,8 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 ## ✨ Principais funcionalidades
 
 - **Site com navegação funcional:** cabeçalho com logomarca, menu com as seções Sobre, A.T.L.A.S., Produtos, Equipe e Contato, e rodapé.
-- **Demonstração de gestos:** o visitante escolhe um gesto da mão e vê como o robô reage.
+- **Demonstração de gestos:** o visitante escolhe um gesto (indicador para cima, direita, baixo ou esquerda) e vê a seta se mover, como o robô reagiria.
+- **Demonstração com câmera (opcional):** o botão "Ativar câmera" liga a câmera do aparelho, e o MediaPipe Hands reconhece a direção do dedo indicador em tempo real para mover a seta. O vídeo é processado no próprio navegador e não é enviado nem gravado.
 - **Produtos em cards:** carregados do banco de dados pela API.
 - **Formulário de pedido:** escolhe o produto, informa nome, e-mail e quantidade; o pedido é gravado no banco.
 - **Formulário de contato:** a mensagem é validada e gravada no banco.
@@ -82,7 +83,8 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 ├── README.md           # Este arquivo
 └── static/
     ├── index.html      # Página do site (estrutura e estilos)
-    └── script.js       # Comportamento: gestos, formulários, produtos e chat
+    ├── script.js       # Comportamento: gestos, formulários, produtos e chat
+    └── camera.js       # Demonstração com câmera: reconhecimento do dedo indicador (MediaPipe)
 ```
 
 O arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução, com os 3 produtos de demonstração.

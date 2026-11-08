@@ -208,3 +208,40 @@ document.getElementById("pedido").addEventListener("submit", async (e) => {
   }
 });
 
+// cadastro de usuário
+document.getElementById("cadastro").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target,
+    ok = document.getElementById("okCadastro");
+  if (
+    !f.nome.value.trim() ||
+    !f.email.value ||
+    !f.email.validity.valid ||
+    f.senha.value.length < 8
+  ) {
+    ok.style.color = "#B3261E";
+    ok.textContent = "Informe nome, e-mail válido e senha de 8+ caracteres.";
+    return;
+  }
+  ok.style.color = "#4B566B";
+  ok.textContent = "Enviando...";
+  try {
+    const r = await fetch(API + "/api/cadastro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: f.nome.value.trim(),
+        email: f.email.value.trim(),
+        senha: f.senha.value,
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro);
+    ok.style.color = "#14683F";
+    ok.textContent = "Cadastro realizado!";
+    f.reset();
+  } catch (err) {
+    ok.style.color = "#B3261E";
+    ok.textContent = err.message || "Não foi possível cadastrar.";
+  }
+});

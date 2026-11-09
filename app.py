@@ -201,13 +201,19 @@ def login_obrigatorio(f):
     return wrapper
 
 
-# Opcional, mas recomendado contra tentativas em massa de senha:
-#   pip install Flask-Limiter
-#   from flask_limiter import Limiter
-#   from flask_limiter.util import get_remote_address
-#   limiter = Limiter(get_remote_address, app=app)
-# e, na rota abaixo, adicione  @limiter.limit("10 per minute")  logo após @app.post("/api/login")
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(get_remote_address, app=app, storage_uri="memory://")
+
+
+@app.errorhandler(429)
+def muitas_tentativas(_):
+    return erro("Muitas tentativas. Espere um minuto e tente de novo.", 429)
+
+
 @app.post("/api/login")
+@limiter.limit("10 per minute")
 def login():
     d = request.get_json(silent=True)
     d = d if isinstance(d, dict) else {}

@@ -54,6 +54,7 @@
             <li><a href="#contato">Contato</a></li>
           </ul>
         </nav>
+        <div class="auth-bar" id="auth-bar" role="group" aria-label="Conta"></div>
       </div>
     </header>
 
@@ -551,8 +552,8 @@
   }
 
   .auth-bar {
-    position: fixed; top: 12px; right: 12px; z-index: 1000;
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 8px; flex: none;
+    max-width: 100%;
     padding: 6px; border-radius: 999px;
     background: var(--auth-fundo); color: var(--auth-texto);
     border: 1px solid var(--auth-borda);
@@ -603,13 +604,16 @@
     padding: 10px 12px; font: 400 15px/1.2 var(--auth-fonte); color: var(--auth-texto);
     background: var(--auth-fundo); border: 1px solid var(--auth-borda); border-radius: 12px;
   }
+  #auth-confirmacao-erro {
+    margin: -8px 0 14px; color: var(--auth-erro); font-size: 13px;
+  }
+  #auth-confirmacao-erro[hidden] { display: none; }
+  #auth-dialog input[aria-invalid="true"] { border-color: var(--auth-erro); }
   #auth-erro { min-height: 1.4em; margin: 0 0 10px; color: var(--auth-erro); }
   .auth-acoes { display: flex; justify-content: flex-end; gap: 8px; }
   
   form#cadastro { display: none; }
  </style>
-
-<div class="auth-bar" id="auth-bar" aria-label="Conta"></div>
 
 <dialog id="auth-dialog" aria-labelledby="auth-titulo">
   <div class="auth-abas" role="tablist">
@@ -627,6 +631,20 @@
     <label>Senha
       <input id="auth-senha" type="password" minlength="8" maxlength="72" required>
     </label>
+    <label id="auth-confirmacao-label" hidden>Confirmar senha
+      <input
+        id="auth-confirmacao"
+        type="password"
+        minlength="8"
+        maxlength="72"
+        autocomplete="new-password"
+        aria-describedby="auth-confirmacao-erro"
+        aria-invalid="false"
+      >
+    </label>
+    <p id="auth-confirmacao-erro" aria-live="polite" aria-atomic="true" hidden>
+      As senhas não coincidem.
+    </p>
     <p id="auth-erro" role="alert"></p>
     <div class="auth-acoes">
       <button type="button" class="auth-btn" id="auth-cancelar">Cancelar</button>
@@ -645,9 +663,23 @@
   const nome = document.getElementById("auth-nome");
   const email = document.getElementById("auth-email");
   const senha = document.getElementById("auth-senha");
+  const confirmacaoLabel = document.getElementById("auth-confirmacao-label");
+  const confirmacao = document.getElementById("auth-confirmacao");
+  const confirmacaoErro = document.getElementById("auth-confirmacao-erro");
   const erroEl = document.getElementById("auth-erro");
   const enviar = document.getElementById("auth-enviar");
   let aba = "login";
+  let enviando = false;
+
+  function validarConfirmacaoSenha() {
+    const divergente =
+      aba === "cadastro" &&
+      confirmacao.value.length > 0 &&
+      senha.value !== confirmacao.value;
+    confirmacaoErro.hidden = !divergente;
+    confirmacao.setAttribute("aria-invalid", String(divergente));
+    enviar.disabled = enviando || divergente;
+  }
 
   async function api(url, corpo) {
     const r = await fetch(url, {
@@ -692,8 +724,12 @@
     enviar.textContent = cadastro ? "Criar conta" : "Entrar";
     nomeLabel.hidden = !cadastro;
     nome.required = cadastro;
+    confirmacaoLabel.hidden = !cadastro;
+    confirmacao.required = cadastro;
+    if (!cadastro) confirmacao.value = "";
     senha.autocomplete = cadastro ? "new-password" : "current-password";
     erroEl.textContent = "";
+    validarConfirmacaoSenha();
     dlg.querySelectorAll(".auth-aba").forEach((b) =>
       b.setAttribute("aria-selected", String(b.dataset.aba === qual)));
     if (!dlg.open) dlg.showModal();
@@ -703,16 +739,25 @@
   dlg.querySelectorAll(".auth-aba").forEach((b) =>
     b.addEventListener("click", () => abrir(b.dataset.aba)));
   document.getElementById("auth-cancelar").addEventListener("click", () => dlg.close());
+  senha.addEventListener("input", validarConfirmacaoSenha);
+  confirmacao.addEventListener("input", validarConfirmacaoSenha);
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     erroEl.textContent = "";
     if (!form.checkValidity()) {
       erroEl.textContent = aba === "cadastro"
-        ? "Preencha nome, e-mail e uma senha de 8 a 72 caracteres."
+        ? "Preencha nome, e-mail, uma senha de 8 a 72 caracteres e confirme a senha."
         : "Preencha e-mail e senha.";
+      form.querySelector(":invalid")?.focus();
       return;
     }
+    if (aba === "cadastro" && senha.value !== confirmacao.value) {
+      validarConfirmacaoSenha();
+      confirmacao.focus();
+      return;
+    }
+    enviando = true;
     enviar.disabled = true;
     const credenciais = { email: email.value, senha: senha.value };
     try {
@@ -726,7 +771,8 @@
     } catch (err) {
       erroEl.textContent = err.message;
     } finally {
-      enviar.disabled = false;
+      enviando = false;
+      validarConfirmacaoSenha();
     }
   });
 

@@ -11,6 +11,7 @@
   const avatarButton = document.getElementById("argoAvatar");
   const avatarReaction = document.getElementById("argoAvatarReaction");
   const panel = document.getElementById("chatBox");
+  const authDialog = document.getElementById("auth-dialog");
   const messages = document.getElementById("chatLog");
   const form = document.getElementById("chatForm");
   const input = document.getElementById("chatIn");
@@ -205,7 +206,11 @@
   expandButton.addEventListener("click", alternarExpansao);
 
   document.addEventListener("keydown", (evento) => {
-    if (evento.key === "Escape" && widget.classList.contains("is-open")) {
+    if (
+      evento.key === "Escape" &&
+      widget.classList.contains("is-open") &&
+      !authDialog?.open
+    ) {
       fecharWidget();
     }
   });

@@ -1,6 +1,6 @@
 # ARGOS
 
-Site completo de apresentação e venda do **robô ARGOS**, um robô controlado por gestos das mãos que apoia a terapia motora. O projeto é da startup fictícia **ARGOS**, de Teresina (PI), e inclui um assistente de Inteligência Artificial com persona própria, o **Argo**.
+Site completo de apresentação e venda do **robô ARGOS**, controlado por gestos das mãos que apoia a terapia motora. O projeto é da startup fictícia **ARGOS**, de Teresina (PI), e inclui um assistente de Inteligência Artificial com persona própria, o **Argo**.
 
 Trabalho da 3ª avaliação (AV3) da disciplina **Desenvolvimento Web para IA**, do Curso Superior de Tecnologia em Inteligência Artificial (2º período, turno manhã) da Faculdade Estadual Piauí, Instituto de Tecnologia (PIT).
 

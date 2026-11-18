@@ -10,6 +10,7 @@ from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from notificacao import avisar_pedido
 from chatbot import chatbot_bp  # chatbot de IA 
 
 load_dotenv()
@@ -139,13 +140,15 @@ def pedidos():
     if not nome or len(nome) > 100 or not email_ok(email) or not 1 <= qtd <= 100:
         return erro("Informe nome, e-mail válido e quantidade entre 1 e 100.")
     db = get_db()
-    if not db.execute("SELECT 1 FROM produtos WHERE id = ?", (produto_id,)).fetchone():
+    produto = db.execute("SELECT nome, preco_centavos FROM produtos WHERE id = ?", (produto_id,)).fetchone()
+    if not produto:
         return erro("Produto não encontrado.", 404)
     cur = db.execute(
         "INSERT INTO pedidos (produto_id, nome, email, quantidade) VALUES (?,?,?,?)",
         (produto_id, nome, email, qtd),
     )
     db.commit()
+    avisar_pedido(cur.lastrowid, produto["nome"], produto["preco_centavos"], qtd, nome, email)
     return jsonify(ok=True, pedido=cur.lastrowid), 201
 
 

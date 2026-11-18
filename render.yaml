@@ -12,3 +12,9 @@ services:
         sync: false   # você informa no painel do Render (nunca no GitHub)
       - key: GROQ_MODEL
         value: openai/gpt-oss-20b
+      - key: RESEND_API_KEY
+        sync: false   # chave da Resend, você informa no painel do Render
+      - key: NOTIFY_EMAIL
+        sync: false   # e-mail que recebe o aviso de pedidos, você informa no painel do Render
+      - key: SECRET_KEY
+        generateValue: true   # o Render cria uma chave aleatória para os logins (cookie de sessão)

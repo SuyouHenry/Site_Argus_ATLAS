@@ -401,6 +401,31 @@
         font-weight: 700;
         margin-top: 0.4rem;
       }
+      .robo {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        text-align: center;
+        background: var(--paper);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        box-shadow: var(--shadow-1);
+      }
+      .robo p {
+        color: var(--ink);
+      }
+      .robo canvas {
+        display: block;
+        width: min(360px, 100%);
+        height: auto;
+        margin: 1rem auto 0;
+        border-radius: var(--r);
+        border: 1px solid var(--line);
+      }
+      #roboInfo {
+        margin-top: 0.8rem;
+        font-weight: 600;
+      }
       .camera {
         margin-top: 1.2rem;
       }

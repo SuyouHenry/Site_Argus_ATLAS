@@ -8,20 +8,25 @@ const MP_MODELO =
   "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
 
 // Cada gesto aponta para o botão manual que tem o mesmo ângulo (ver data-ang no HTML).
+// "parar" e "confirmar" não têm ângulo: ligam ao botão com data-acao igual.
 const ANGULO = { cima: 0, direita: 90, baixo: 180, esquerda: -90 };
 const NOME = {
   cima: "indicador para cima",
   direita: "indicador para a direita",
   baixo: "indicador para baixo",
   esquerda: "indicador para a esquerda",
+  parar: "mão aberta (parar)",
+  confirmar: "polegar para cima (confirmar)",
 };
 const TOLERANCIA = 35; // graus de folga em torno de cada direção
 const QUADROS_ESTAVEIS = 3; // quadros seguidos iguais antes de mudar a seta
 
 /**
  * Recebe os 21 pontos da mão (x, y de 0 a 1, y cresce para baixo, imagem SEM espelho)
- * e devolve "cima", "direita", "baixo", "esquerda" ou null.
- * Só vale com o indicador esticado e os outros três dedos dobrados.
+ * e devolve "cima", "direita", "baixo", "esquerda", "parar", "confirmar" ou null.
+ * - "parar": mão aberta, os quatro dedos esticados.
+ * - "confirmar": polegar esticado para cima e os quatro dedos dobrados.
+ * - setas: só o indicador esticado e os outros três dobrados.
  * "direita"/"esquerda" são do ponto de vista de quem usa (como num espelho).
  */
 function classificarGesto(lm) {
@@ -31,8 +36,24 @@ function classificarGesto(lm) {
   if (!palma) return null;
 
   const esticado = (ponta, junta) => dist(lm[0], lm[ponta]) > dist(lm[0], lm[junta]) * 1.05;
-  if (!esticado(8, 6)) return null; // indicador precisa estar esticado
-  if (esticado(12, 10) || esticado(16, 14) || esticado(20, 18)) return null; // demais dobrados
+  const indicador = esticado(8, 6);
+  const medio = esticado(12, 10);
+  const anelar = esticado(16, 14);
+  const minimo = esticado(20, 18);
+
+  if (indicador && medio && anelar && minimo) return "parar"; // mão aberta
+
+  if (!indicador && !medio && !anelar && !minimo) {
+    // punho com o polegar apontado para cima
+    const polegarEsticado = dist(lm[0], lm[4]) > dist(lm[0], lm[2]) * 1.2;
+    const sobe = lm[2].y - lm[4].y; // positivo = ponta acima da base
+    const acimaDosDedos = [8, 12, 16, 20].every((i) => lm[4].y < lm[i].y);
+    if (polegarEsticado && sobe > palma * 0.6 && acimaDosDedos) return "confirmar";
+    return null;
+  }
+
+  if (!indicador) return null; // indicador precisa estar esticado
+  if (medio || anelar || minimo) return null; // demais dobrados
 
   const dx = lm[8].x - lm[5].x;
   const dy = lm[8].y - lm[5].y;
@@ -121,7 +142,9 @@ if (typeof module !== "undefined") module.exports = { classificarGesto };
   function aplicar(gesto) {
     if (gesto === atual) return;
     atual = gesto;
-    const alvo = [...botoes].find((b) => Number(b.dataset.ang) === ANGULO[gesto]);
+    const alvo = [...botoes].find((b) =>
+      gesto in ANGULO ? b.dataset.ang !== undefined && Number(b.dataset.ang) === ANGULO[gesto] : b.dataset.acao === gesto,
+    );
     if (alvo) alvo.click(); // reaproveita a lógica dos botões (gira a seta e atualiza o texto)
   }
 
@@ -142,7 +165,7 @@ if (typeof module !== "undefined") module.exports = { classificarGesto };
 
     const gesto = classificarGesto(lm);
     if (!lm) dizer("Câmera ligada. Mostre a mão para a câmera.");
-    else if (!gesto) dizer("Mão detectada. Dobre os outros dedos e aponte só o indicador.");
+    else if (!gesto) dizer("Mão detectada. Aponte só o indicador, abra a mão (parar) ou mostre o polegar para cima (confirmar).");
     else dizer("Detectado: " + NOME[gesto] + ".");
 
     if (gesto && gesto === candidato) repeticoes++;
@@ -199,7 +222,7 @@ if (typeof module !== "undefined") module.exports = { classificarGesto };
     btn.disabled = false;
     btn.textContent = "Desativar câmera";
     btn.setAttribute("aria-pressed", "true");
-    dizer("Câmera ligada. Aponte o indicador para cima, direita, baixo ou esquerda.");
+    dizer("Câmera ligada. Aponte o indicador, abra a mão (parar) ou mostre o polegar para cima (confirmar).");
     laco();
   }
 

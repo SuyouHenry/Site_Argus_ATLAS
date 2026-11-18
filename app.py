@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 # Produtos e preços FICTÍCIOS (cenário de demonstração do trabalho).
 SEED = [
-    ("A.T.L.A.S. Básico", "Robô controlado por gestos para terapia motora em casa.", 149000, "fisico"),
-    ("A.T.L.A.S. Clínica", "Robô com câmera dedicada e sessões registradas para uso profissional.", 329000, "fisico"),
+    ("ARGOS Básico", "Robô controlado por gestos para terapia motora em casa.", 149000, "fisico"),
+    ("ARGOS Clínica", "Robô com câmera dedicada e sessões registradas para uso profissional.", 329000, "fisico"),
     ("Relatórios de Evolução com IA", "Assinatura mensal de relatórios de evolução motora gerados por IA.", 4990, "digital"),
 ]
 

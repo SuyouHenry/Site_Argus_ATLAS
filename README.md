@@ -1,6 +1,6 @@
-# ARGOS · A.T.L.A.S.
+# ARGOS
 
-Site completo de apresentação e venda do **A.T.L.A.S.** (Sistema de Assistência em Terapia e Locomoção Adaptativa), um robô controlado por gestos das mãos que apoia a terapia motora. O projeto é da startup fictícia **ARGOS**, de Teresina (PI), e inclui um assistente de Inteligência Artificial com persona própria, o **Argo**.
+Site completo de apresentação e venda do **robô ARGOS**, controlado por gestos das mãos que apoia a terapia motora. O projeto é da startup fictícia **ARGOS**, de Teresina (PI), e inclui um assistente de Inteligência Artificial com persona própria, o **Argo**.
 
 Trabalho da 3ª avaliação (AV3) da disciplina **Desenvolvimento Web para IA**, do Curso Superior de Tecnologia em Inteligência Artificial (2º período, turno manhã) da Faculdade Estadual Piauí, Instituto de Tecnologia (PIT).
 
@@ -21,7 +21,7 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 
 ## 🎯 Tema e público-alvo
 
-- **Produto:** o A.T.L.A.S. (físico) e uma assinatura de relatórios de evolução motora gerados por IA (digital).
+- **Produto:** o ARGOS (físico) e uma assinatura de relatórios de evolução motora gerados por IA (digital).
 - **Público-alvo:** clínicas, terapeutas e famílias que buscam uma terapia motora mais engajadora e mensurável.
 
 ## 🛠️ Tecnologias Utilizadas
@@ -36,13 +36,13 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 
 ## ✨ Principais funcionalidades
 
-- **Site com navegação funcional:** cabeçalho com logomarca, menu com as seções Sobre, A.T.L.A.S., Produtos, Equipe e Contato, e rodapé.
+- **Site com navegação funcional:** cabeçalho com logomarca, menu com as seções Sobre, ARGOS, Produtos, Equipe e Contato, e rodapé.
 - **Demonstração de gestos:** o visitante escolhe um gesto (indicador para cima, direita, baixo ou esquerda) e vê a seta se mover, como o robô reagiria.
 - **Demonstração com câmera (opcional):** o botão "Ativar câmera" liga a câmera do aparelho, e o MediaPipe Hands reconhece a direção do dedo indicador em tempo real para mover a seta. O vídeo é processado no próprio navegador e não é enviado nem gravado.
 - **Produtos em cards:** carregados do banco de dados pela API.
 - **Formulário de pedido:** escolhe o produto, informa nome, e-mail e quantidade; o pedido é gravado no banco.
 - **Formulário de contato:** a mensagem é validada e gravada no banco.
-- **Chat com o Argo:** assistente de IA para tirar dúvidas sobre a ARGOS, o A.T.L.A.S., os produtos e o uso do site.
+- **Chat com o Argo:** assistente de IA para tirar dúvidas sobre a ARGOS, os produtos e o uso do site.
 - **Acessibilidade e responsividade:** link "ir para o conteúdo", foco visível e layout que se adapta a telas pequenas.
 
 ## 🤖 Integração com Inteligência Artificial
@@ -52,7 +52,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 **Persona (`persona.py`):** o **Argo** é o assistente virtual da ARGOS. O nome vem do gigante grego de cem olhos, e o perfil é atento, acolhedor, claro e paciente. Responde em português do Brasil, com frases curtas e no máximo 4 frases.
 
 **Contexto e regras do Argo:**
-- Só ajuda com a ARGOS, o A.T.L.A.S., como funciona, produtos e planos, como comprar e como usar o site.
+- Só ajuda com a ARGOS, como funciona, produtos e planos, como comprar e como usar o site.
 - Se perguntarem outro assunto (política, tarefas escolares, programação etc.), recusa com gentileza e oferece ajuda sobre a ARGOS.
 - Não dá diagnóstico nem orientação médica; indica um profissional de saúde.
 - Usa somente os produtos e preços do catálogo e não inventa prazo, frete ou garantia; nesses casos, indica o formulário de contato.

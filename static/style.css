@@ -383,6 +383,16 @@
         transform-origin: 60px 60px;
         transition: transform 0.4s ease;
       }
+      .painel #seta path {
+        transition: fill 0.3s ease, opacity 0.3s ease;
+      }
+      .painel.parado #seta path {
+        fill: #b3261e;
+        opacity: 0.45;
+      }
+      .painel.confirmado #seta path {
+        fill: #14683f;
+      }
       .painel output {
         color: var(--ink);
         display: block;

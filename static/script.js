@@ -82,15 +82,20 @@ P.forEach(([x, y], i) => {
 // demonstração de gestos
 const btns = document.querySelectorAll(".gestos button"),
   seta = document.getElementById("seta"),
-  saida = document.getElementById("saida");
+  saida = document.getElementById("saida"),
+  painel = document.getElementById("painel");
 let rotacao = 0; // gira sempre pelo caminho mais curto
 btns.forEach((b) =>
   b.addEventListener("click", () => {
     btns.forEach((x) => x.setAttribute("aria-pressed", "false"));
     b.setAttribute("aria-pressed", "true");
-    const dif = ((((Number(b.dataset.ang) - rotacao) % 360) + 540) % 360) - 180;
-    rotacao += dif;
-    seta.style.transform = "rotate(" + rotacao + "deg)";
+    painel.classList.toggle("parado", b.dataset.acao === "parar");
+    painel.classList.toggle("confirmado", b.dataset.acao === "confirmar");
+    if (b.dataset.ang !== undefined) {
+      const dif = ((((Number(b.dataset.ang) - rotacao) % 360) + 540) % 360) - 180;
+      rotacao += dif;
+      seta.style.transform = "rotate(" + rotacao + "deg)";
+    }
     saida.textContent = b.dataset.txt;
   }),
 );

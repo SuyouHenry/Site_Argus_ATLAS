@@ -24,7 +24,7 @@
     "Estou pronto para ajudar!",
     "Pode clicar, eu não mordo! 😅",
     "É sempre bom receber uma visita 😊",
-    "Vamos conhecer o A.T.L.A.S.?",
+    "Vamos conhecer o ARGOS?",
     "Chamou? Estou na escuta!",
     "Sou pequeno, mas tenho muito a contar!",
   ];
@@ -149,7 +149,7 @@
 
     texto.textContent =
       "Olá! Seja bem-vindo!\n\n" +
-      "Sou o Argô, assistente virtual do projeto. Estou aqui para ajudar você a conhecer o A.T.L.A.S., entender como funciona e descobrir nossas soluções.\n\n" +
+      "Sou o Argô, assistente virtual do projeto. Estou aqui para ajudar você a conhecer o ARGOS, entender como funciona e descobrir nossas soluções.\n\n" +
       "Que tal experimentar uma demonstração do reconhecimento de gestos? Você poderá conhecer um pouco da tecnologia na prática!";
 
     const acoes = document.createElement("div");

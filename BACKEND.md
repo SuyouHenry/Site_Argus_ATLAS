@@ -21,7 +21,7 @@ Abra http://localhost:5000 (o Flask também serve o site da pasta `static/`).
 | POST | `/api/chat` | `mensagem`, `historico:[{role,content}]` | `{resposta}` |
 
 ## Integração com IA
-A rota `/api/chat` (em `chatbot.py`) envia a mensagem para a API da Groq com um *system prompt* (`persona.py`) que define a persona **Argo**, as regras de escopo e o catálogo atual lido do banco. Assim o assistente só fala da ARGOS e do A.T.L.A.S. e recusa assuntos fora do contexto. A chave fica só no servidor (`.env`), nunca no navegador.
+A rota `/api/chat` (em `chatbot.py`) envia a mensagem para a API da Groq com um *system prompt* (`persona.py`) que define a persona **Argo**, as regras de escopo e o catálogo atual lido do banco. Assim o assistente só fala da ARGOS e do ARGOS e recusa assuntos fora do contexto. A chave fica só no servidor (`.env`), nunca no navegador.
 
 ## Exemplo para o front end
 ```js

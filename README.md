@@ -27,9 +27,10 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 ## 🛠️ Tecnologias Utilizadas
 
 - **Front end:** HTML5, CSS3 (`grid`, `flex`, layout responsivo) e JavaScript puro.
-- **Back end:** Python 3 com Flask e Flask-CORS.
+- **Back end:** Python 3 com Flask, Flask-CORS e Flask-Limiter (limite de tentativas de login).
 - **Banco de dados:** SQLite.
 - **Inteligência Artificial:** API da Groq (modelo `openai/gpt-oss-20b`, plano gratuito) para o chat, e MediaPipe Hands (`@mediapipe/tasks-vision`) para o reconhecimento de gestos pela câmera.
+- **E-mail de avisos:** API da Resend (aviso de novo pedido).
 - **Servidor de produção:** Gunicorn.
 - **Hospedagem:** Render.
 - **Versionamento:** Git e GitHub.
@@ -37,10 +38,13 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 ## ✨ Principais funcionalidades
 
 - **Site com navegação funcional:** cabeçalho com logomarca, menu com as seções Sobre, ARGOS, Produtos, Equipe e Contato, e rodapé.
-- **Demonstração de gestos:** o visitante escolhe um gesto (indicador para cima, direita, baixo ou esquerda) e vê a seta se mover, como o robô reagiria.
-- **Demonstração com câmera (opcional):** o botão "Ativar câmera" liga a câmera do aparelho, e o MediaPipe Hands reconhece a direção do dedo indicador em tempo real para mover a seta. O vídeo é processado no próprio navegador e não é enviado nem gravado.
+- **Demonstração de gestos:** o visitante escolhe um gesto (indicador para cima, direita, baixo ou esquerda, mão aberta para parar, polegar para cima para confirmar) e vê a seta reagir, como o robô faria.
+- **Demonstração com câmera (opcional):** o botão "Ativar câmera" liga a câmera do aparelho, e o MediaPipe Hands reconhece esses seis gestos em tempo real. O vídeo é processado no próprio navegador e não é enviado nem gravado.
+- **Robô virtual:** um robô num mapa que anda conforme o gesto (botões ou câmera), para com a mão aberta e entrega a carga na bandeira com o polegar para cima.
+- **Cadastro e login:** o visitante cria uma conta (nome, e-mail e senha) e entra pelo botão do cabeçalho. A senha é guardada só como *hash*, a sessão usa cookie assinado e o login tem limite de tentativas por minuto.
 - **Produtos em cards:** carregados do banco de dados pela API.
 - **Formulário de pedido:** escolhe o produto, informa nome, e-mail e quantidade; o pedido é gravado no banco.
+- **Aviso de pedido por e-mail:** a cada pedido novo, a equipe recebe um e-mail com o produto, a quantidade, o total e os dados do cliente. O envio é opcional e não atrapalha o pedido se falhar.
 - **Formulário de contato:** a mensagem é validada e gravada no banco.
 - **Chat com o Argo:** assistente de IA para tirar dúvidas sobre a ARGOS, os produtos e o uso do site.
 - **Acessibilidade e responsividade:** link "ir para o conteúdo", foco visível e layout que se adapta a telas pequenas.
@@ -75,19 +79,25 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 ├── app.py              # Servidor Flask: rotas da API, banco SQLite e entrega do site
 ├── chatbot.py          # Rota /api/chat e integração com a API da Groq
 ├── persona.py          # Persona e regras do assistente Argo
+├── notificacao.py      # Aviso de novo pedido por e-mail (API da Resend)
 ├── requirements.txt    # Dependências do Python
 ├── render.yaml         # Configuração de deploy no Render
-├── .env.example        # Modelo das variáveis de ambiente (sem chave real)
 ├── .gitignore          # Arquivos que não vão para o GitHub (.env, banco etc.)
 ├── BACKEND.md          # Documentação técnica complementar do back end
 ├── README.md           # Este arquivo
 └── static/
-    ├── index.html      # Página do site (estrutura e estilos)
-    ├── script.js       # Comportamento: gestos, formulários, produtos e chat
-    └── camera.js       # Demonstração com câmera: reconhecimento do dedo indicador (MediaPipe)
+    ├── index.html      # Página do site (estrutura, cadastro e login)
+    ├── style.css       # Estilos do site
+    ├── chat.css        # Estilos do chat do Argo
+    ├── script.js       # Comportamento: gestos, formulários e produtos
+    ├── camera.js       # Demonstração com câmera: reconhecimento dos gestos (MediaPipe)
+    ├── robo.js         # Robô virtual que anda conforme o gesto
+    ├── chat.js         # Janela do chat e envio das mensagens ao Argo
+    ├── argo-avatar.png # Avatar do Argo
+    └── argos-favicon.svg # Ícone da aba do navegador
 ```
 
-O arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução, com os 3 produtos de demonstração.
+O arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução, com as tabelas `produtos`, `pedidos`, `mensagens` e `usuarios` e os 3 produtos de demonstração.
 
 ## 🚀 Instruções de instalação e execução
 
@@ -106,9 +116,11 @@ venv\Scripts\activate            # Windows
 # 3. Instalar as dependências
 pip install -r requirements.txt
 
-# 4. Configurar a chave da IA
-copy .env.example .env           # Windows  (Linux/Mac: cp .env.example .env)
-# abra o arquivo .env e coloque sua GROQ_API_KEY
+# 4. Criar o arquivo .env (na raiz do projeto) com este conteúdo:
+#    SECRET_KEY=um-texto-aleatorio-longo
+#    COOKIE_SECURE=0
+#    GROQ_API_KEY=sua-chave-da-groq
+# (veja a tabela de variáveis abaixo)
 
 # 5. Rodar
 python app.py
@@ -122,9 +134,14 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 
 | Variável | Para que serve |
 |---|---|
+| `SECRET_KEY` | **Obrigatória.** Texto aleatório longo que assina o cookie de login. Sem ela o servidor não inicia. Para gerar: `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `COOKIE_SECURE` | Use `0` só para testar o login em `http://localhost`. Em produção (https), deixe sem definir |
 | `GROQ_API_KEY` | Chave da API da Groq (obrigatória para o chat) |
 | `GROQ_MODEL` | Modelo usado (padrão: `openai/gpt-oss-20b`) |
 | `CHAT_LIMITE` | Mensagens por IP a cada 10 minutos (padrão: 20) |
+| `RESEND_API_KEY` | Chave da Resend, para o aviso de pedido por e-mail (opcional) |
+| `NOTIFY_EMAIL` | E-mail que recebe o aviso de pedido (opcional; sem ele o aviso não é enviado) |
+| `MAIL_FROM` | Remetente do aviso (padrão: `ARGOS <onboarding@resend.dev>`) |
 
 > Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege.
 
@@ -136,12 +153,17 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | POST | `/api/contato` | `nome`, `email`, `mensagem` | 201 `{ok: true}` |
 | POST | `/api/pedidos` | `nome`, `email`, `produto_id`, `quantidade` | 201 `{ok: true, pedido: id}` |
 | POST | `/api/chat` | `mensagem`, `historico: [{role, content}]` | `{resposta}` |
+| POST | `/api/cadastro` | `nome`, `email`, `senha` (8 a 72 caracteres) | 201 `{ok: true, usuario: id}`; 409 se o e-mail já existe |
+| POST | `/api/login` | `email`, `senha` | `{ok: true, usuario}` e cookie de sessão; 401 se incorreto; limite de 10 por minuto |
+| POST | `/api/logout` | – | `{ok: true}` |
+| GET | `/api/eu` | – | Usuário logado ou `null` |
+| GET | `/api/minha-conta` | – | Dados do usuário logado; 401 se não houver login |
 
 ## ☁️ Publicação (Render)
 
-O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel. A cada mudança na branch `main`, o Render atualiza o site automaticamente. Mais detalhes em [BACKEND.md](BACKEND.md).
+O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel (e, para o aviso de pedidos, `RESEND_API_KEY` e `NOTIFY_EMAIL`). O `SECRET_KEY` é gerado automaticamente pelo Render. A cada mudança na branch `main`, o Render atualiza o site automaticamente. Mais detalhes em [BACKEND.md](BACKEND.md).
 
-No plano gratuito o disco é temporário: o `argos.db` é recriado a cada reinício, então pedidos e mensagens de contato não são preservados.
+No plano gratuito o disco é temporário: o `argos.db` é recriado a cada reinício, então pedidos, cadastros e mensagens de contato não são preservados. O e-mail de aviso de pedido é o único registro que fica.
 
 ## ⚠️ Direitos Autorais e Licença (Copyright)
 **Todos os direitos reservados.**

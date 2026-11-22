@@ -402,7 +402,7 @@
         margin-top: 0.4rem;
       }
       .robo {
-        margin-top: 2rem;
+        grid-column: 1 / -1; /* ocupa a linha toda abaixo dos botões e do painel */
         padding: 1.5rem;
         text-align: center;
         background: var(--paper);
@@ -594,6 +594,52 @@
         .two,
         .demo {
           grid-template-columns: 1fr;
+        }
+        /* celular: botões, robô e painel na ordem de uso, tudo perto na tela */
+        .demo {
+          gap: 1rem;
+        }
+        .gestos {
+          order: 1;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+        }
+        .gestos button {
+          padding: 0.6rem 0.3rem;
+          font-size: 0.82rem;
+          line-height: 1.25;
+          min-height: 3.2rem;
+        }
+        .robo {
+          order: 2;
+          padding: 0.9rem;
+        }
+        .robo-dica {
+          display: none; /* a dica já está nos botões; economiza espaço */
+        }
+        .robo h3 {
+          font-size: 1rem;
+        }
+        #roboInfo {
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+        }
+        .painel {
+          order: 3;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 0.8rem 1rem;
+          text-align: left;
+        }
+        .painel svg {
+          width: 64px;
+          height: 64px;
+          flex: none;
+        }
+        .painel output {
+          font-size: 1.05rem;
+          margin-top: 0;
         }
         section {
           padding: 3.5rem 0;

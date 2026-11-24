@@ -160,7 +160,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 
 ## ☁️ Publicação (Render)
 
-O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel (e, para o aviso de pedidos, `RESEND_API_KEY` e `NOTIFY_EMAIL`). O `SECRET_KEY` é gerado automaticamente pelo Render. A cada mudança na branch `main`, o Render atualiza o site automaticamente. Mais detalhes em [BACKEND.md](BACKEND.md).
+O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel (e, para o aviso de pedidos, `RESEND_API_KEY` e `NOTIFY_EMAIL`). O `SECRET_KEY` é gerado automaticamente pelo Render. Conforme informado pelo painel, a branch atualmente vinculada ao Blueprint é `main`. A implantação automática depende do Auto-Deploy do Web Service; a sincronização de alterações no próprio Blueprint é controlada separadamente pelo Auto Sync. Como essas opções podem ser alteradas no painel, uma mudança na `main` não garante, por si só, a atualização do site. Mais detalhes em [DEPLOY.md](DEPLOY.md) e [BACKEND.md](BACKEND.md).
 
 No plano gratuito o disco é temporário: o `argos.db` é recriado a cada reinício, então pedidos, cadastros e mensagens de contato não são preservados. O e-mail de aviso de pedido é o único registro que fica.
 

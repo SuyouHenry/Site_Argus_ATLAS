@@ -1,4 +1,6 @@
 .env
+.env.*
+!.env.example
 argos.db
 __pycache__/
 venv/

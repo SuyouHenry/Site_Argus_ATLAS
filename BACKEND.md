@@ -12,6 +12,13 @@ python app.py
 ```
 Abra http://localhost:5000 (o Flask também serve o site da pasta `static/`).
 
+## Integridade e índice do banco
+As conexões SQLite ativam `PRAGMA foreign_keys = ON`, para que a referência
+`pedidos.produto_id → produtos.id` seja fiscalizada pelo próprio banco.
+O esquema também cria o índice `idx_pedidos_produto` em `pedidos(produto_id)`,
+útil para consultas que filtram pedidos por produto e para localizar registros
+relacionados nessa chave estrangeira.
+
 ## Rotas
 | Método | Rota | Corpo (JSON) | Resposta |
 |---|---|---|---|

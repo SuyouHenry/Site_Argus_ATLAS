@@ -116,11 +116,10 @@ venv\Scripts\activate            # Windows
 # 3. Instalar as dependências
 pip install -r requirements.txt
 
-# 4. Criar o arquivo .env (na raiz do projeto) com este conteúdo:
-#    SECRET_KEY=um-texto-aleatorio-longo
-#    COOKIE_SECURE=0
-#    GROQ_API_KEY=sua-chave-da-groq
-# (veja a tabela de variáveis abaixo)
+# 4. Criar o arquivo .env a partir do modelo
+copy .env.example .env       # Windows
+# cp .env.example .env       # Linux / Mac
+# Edite o .env e preencha SECRET_KEY e, se quiser usar o chat, GROQ_API_KEY
 
 # 5. Rodar
 python app.py
@@ -143,7 +142,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | `NOTIFY_EMAIL` | E-mail que recebe o aviso de pedido (opcional; sem ele o aviso não é enviado) |
 | `MAIL_FROM` | Remetente do aviso (padrão: `ARGOS <onboarding@resend.dev>`) |
 
-> Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege.
+> Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege. O `.env.example` contém apenas nomes e valores padrão/documentais, sem credenciais reais.
 
 ## 🔌 Rotas da API
 

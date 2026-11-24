@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
   senha_hash TEXT NOT NULL,     -- nunca a senha em texto puro
   criado_em TEXT DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_pedidos_produto
+  ON pedidos(produto_id);
 """
 
 # Produtos e preços FICTÍCIOS (cenário de demonstração do trabalho).
@@ -76,6 +78,7 @@ SEED = [
 def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(DB_PATH)
+        g.db.execute("PRAGMA foreign_keys = ON")
         g.db.row_factory = sqlite3.Row
     return g.db
 
@@ -89,6 +92,7 @@ def close_db(_):
 
 def init_db():
     db = sqlite3.connect(DB_PATH)
+    db.execute("PRAGMA foreign_keys = ON")
     db.executescript(SCHEMA)
     if db.execute("SELECT COUNT(*) FROM produtos").fetchone()[0] == 0:
         db.executemany("INSERT INTO produtos (nome, descricao, preco_centavos, tipo) VALUES (?,?,?,?)", SEED)

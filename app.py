@@ -10,7 +10,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import banco
-from notificacao import avisar_pedido
+from notificacao import avisar_contato, avisar_pedido
 from chatbot import chatbot_bp  # chatbot de IA 
 
 load_dotenv()
@@ -158,6 +158,7 @@ def contato():
     db = get_db()
     db.execute("INSERT INTO mensagens (nome, email, mensagem) VALUES (?,?,?)", (nome, email, msg))
     db.commit()
+    avisar_contato(nome, email, msg)
     return jsonify(ok=True), 201
 
 

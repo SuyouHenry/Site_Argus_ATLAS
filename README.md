@@ -141,7 +141,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | `CHAT_LIMITE` | Mensagens por IP a cada 10 minutos (padrão: 20) |
 | `DATABASE_URL` | Endereço de um PostgreSQL externo (ex.: `postgresql://usuario:senha@host/banco?sslmode=require`). Opcional: sem ela o site usa o SQLite local. Use na publicação para manter os dados |
 | `RESEND_API_KEY` | Chave da Resend, para o aviso de pedido por e-mail (opcional) |
-| `NOTIFY_EMAIL` | E-mail que recebe o aviso de pedido (opcional; sem ele o aviso não é enviado) |
+| `NOTIFY_EMAIL` | E-mail que recebe os avisos de novo pedido e de nova mensagem de contato (opcional; sem ele os avisos não são enviados) |
 | `MAIL_FROM` | Remetente do aviso (padrão: `ARGOS <onboarding@resend.dev>`) |
 
 **Aviso de pedido não chegou?** Abra os *Logs* do serviço no Render logo depois de fazer um pedido: o site registra "Aviso de pedido enviado" quando a Resend aceita o e-mail, ou o motivo da recusa. Com o remetente padrão de testes (`onboarding@resend.dev`), a Resend só entrega para o e-mail da própria conta dela, então `NOTIFY_EMAIL` precisa ser esse endereço (ou use um domínio verificado em `MAIL_FROM`). Veja também a pasta de spam.

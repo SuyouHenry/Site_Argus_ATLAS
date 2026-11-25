@@ -1,6 +1,6 @@
 # ARGOS · Back end
 
-API em Flask com banco SQLite e o assistente de IA **Argo** (IA da Groq, com plano gratuito).
+API em Flask com banco SQLite (local) ou PostgreSQL (publicação) e o assistente de IA **Argo** (IA da Groq, com plano gratuito).
 
 ## Como rodar
 ```bash
@@ -45,7 +45,8 @@ const produtos = await (await fetch('/api/produtos')).json();
 
 ## Estrutura
 ```
-app.py           rotas da loja e banco de dados (SQLite)
+app.py           rotas da loja e esquema do banco
+banco.py         conexão: SQLite local ou PostgreSQL (DATABASE_URL)
 chatbot.py       rota /api/chat e chamada à API de IA
 persona.py       persona e regras do Argo
 static/          front end (index.html, css, js)
@@ -59,5 +60,5 @@ requirements.txt dependências
 3. Quando pedir, informe a variável `GROQ_API_KEY` com sua chave da Groq, gratuita em https://console.groq.com/keys (ela fica só no painel do Render, nunca no GitHub).
 4. Aguarde o deploy; o Render dá um endereço `https://argos-xxxx.onrender.com` que abre em qualquer computador.
 
-Observações do plano gratuito: o site "dorme" após alguns minutos sem acesso (o primeiro acesso demora ~1 min) e o disco é temporário, então `argos.db` é recriado a cada deploy/reinício (pedidos e mensagens de contato não são preservados). Para guardar dados de verdade, use um disco persistente (plano pago) ou um banco externo.
+Observações do plano gratuito: o site "dorme" após alguns minutos sem acesso (o primeiro acesso demora ~1 min) e o disco é temporário, então `argos.db` é recriado a cada deploy/reinício (pedidos e mensagens de contato não são preservados). Para guardar dados de verdade sem pagar, crie um PostgreSQL gratuito (ex.: Neon) e informe o endereço dele em `DATABASE_URL` no painel do Render; sem essa variável o site continua usando o SQLite local.
 O chat tem limite por IP (padrão 20 mensagens a cada 10 min; ajuste com `CHAT_LIMITE`) para proteger sua cota gratuita da API.

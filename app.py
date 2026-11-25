@@ -1,6 +1,5 @@
-"""Back end da ARGOS: API (Flask) e banco SQLite. O chatbot fica em chatbot.py."""
+"""Back end da ARGOS: API (Flask) e banco de dados (SQLite local ou PostgreSQL, veja banco.py). O chatbot fica em chatbot.py."""
 import os
-import sqlite3
 from datetime import timedelta
 from functools import wraps
 
@@ -10,6 +9,7 @@ from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 
+import banco
 from notificacao import avisar_pedido
 from chatbot import chatbot_bp  # chatbot de IA 
 
@@ -67,6 +67,37 @@ CREATE INDEX IF NOT EXISTS idx_pedidos_produto
   ON pedidos(produto_id);
 """
 
+# Mesmo modelo para PostgreSQL (usado quando DATABASE_URL está definida)
+SCHEMA_PG = """
+CREATE TABLE IF NOT EXISTS produtos (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  descricao TEXT NOT NULL,
+  preco_centavos INTEGER NOT NULL,
+  tipo TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS mensagens (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL, email TEXT NOT NULL, mensagem TEXT NOT NULL,
+  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS pedidos (
+  id SERIAL PRIMARY KEY,
+  produto_id INTEGER NOT NULL REFERENCES produtos(id),
+  nome TEXT NOT NULL, email TEXT NOT NULL, quantidade INTEGER NOT NULL,
+  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS usuarios (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  senha_hash TEXT NOT NULL,
+  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_pedidos_produto
+  ON pedidos(produto_id);
+"""
+
 # Produtos e preços FICTÍCIOS (cenário de demonstração do trabalho).
 SEED = [
     ("ARGOS Básico", "Robô controlado por gestos para terapia motora em casa.", 149000, "fisico"),
@@ -77,9 +108,7 @@ SEED = [
 
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(DB_PATH)
-        g.db.execute("PRAGMA foreign_keys = ON")
-        g.db.row_factory = sqlite3.Row
+        g.db = banco.conectar(DB_PATH)
     return g.db
 
 
@@ -91,10 +120,9 @@ def close_db(_):
 
 
 def init_db():
-    db = sqlite3.connect(DB_PATH)
-    db.execute("PRAGMA foreign_keys = ON")
-    db.executescript(SCHEMA)
-    if db.execute("SELECT COUNT(*) FROM produtos").fetchone()[0] == 0:
+    db = banco.conectar(DB_PATH)
+    db.executescript(SCHEMA_PG if banco.usa_postgres() else SCHEMA)
+    if db.execute("SELECT COUNT(*) AS n FROM produtos").fetchone()["n"] == 0:
         db.executemany("INSERT INTO produtos (nome, descricao, preco_centavos, tipo) VALUES (?,?,?,?)", SEED)
     db.commit()
     db.close()
@@ -147,13 +175,13 @@ def pedidos():
     produto = db.execute("SELECT nome, preco_centavos FROM produtos WHERE id = ?", (produto_id,)).fetchone()
     if not produto:
         return erro("Produto não encontrado.", 404)
-    cur = db.execute(
+    pedido_id = db.inserir(
         "INSERT INTO pedidos (produto_id, nome, email, quantidade) VALUES (?,?,?,?)",
         (produto_id, nome, email, qtd),
     )
     db.commit()
-    avisar_pedido(cur.lastrowid, produto["nome"], produto["preco_centavos"], qtd, nome, email)
-    return jsonify(ok=True, pedido=cur.lastrowid), 201
+    avisar_pedido(pedido_id, produto["nome"], produto["preco_centavos"], qtd, nome, email)
+    return jsonify(ok=True, pedido=pedido_id), 201
 
 
 @app.post("/api/cadastro")
@@ -168,14 +196,14 @@ def cadastro():
         return erro("A senha deve ter entre 8 e 72 caracteres.")
     db = get_db()
     try:
-        cur = db.execute(
+        usuario_id = db.inserir(
             "INSERT INTO usuarios (nome, email, senha_hash) VALUES (?,?,?)",
             (nome, email, generate_password_hash(senha)),
         )
         db.commit()
-    except sqlite3.IntegrityError:
+    except banco.erros_integridade():
         return erro("Este e-mail já está cadastrado.", 409)
-    return jsonify(ok=True, usuario=cur.lastrowid), 201
+    return jsonify(ok=True, usuario=usuario_id), 201
 
 
 # ---------------------------------------------------------------------------
@@ -260,7 +288,7 @@ def eu():
 def minha_conta():
     """Exemplo de rota protegida: só responde para quem está logado."""
     u = g.usuario
-    return jsonify(id=u["id"], nome=u["nome"], email=u["email"], criado_em=u["criado_em"])
+    return jsonify(id=u["id"], nome=u["nome"], email=u["email"], criado_em=str(u["criado_em"]))
 
 
 init_db()

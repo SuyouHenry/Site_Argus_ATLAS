@@ -60,8 +60,20 @@ def _enviar(corpo):
             time.sleep(2)
 
 
+def _disparar(destino, assunto, texto, responder_para):
+    """Monta o e-mail e envia em segundo plano, para a resposta ao visitante não esperar a rede."""
+    corpo = {
+        "from": os.getenv("MAIL_FROM", "ARGOS <onboarding@resend.dev>"),
+        "to": [destino],
+        "subject": assunto[:150],
+        "text": texto,
+        "reply_to": responder_para,
+    }
+    threading.Thread(target=_enviar, args=(corpo,), daemon=True).start()
+
+
 def avisar_pedido(pedido_id, produto, preco_centavos, qtd, nome, email):
-    """Dispara o e-mail em segundo plano, para a resposta ao cliente não esperar a rede."""
+    """Aviso de novo pedido."""
     destino = os.getenv("NOTIFY_EMAIL")
     if not destino:
         log.warning("NOTIFY_EMAIL ausente: aviso de pedido não enviado.")
@@ -76,11 +88,20 @@ def avisar_pedido(pedido_id, produto, preco_centavos, qtd, nome, email):
         f"Cliente: {nome}\n"
         f"E-mail do cliente: {email}\n"
     )
-    corpo = {
-        "from": os.getenv("MAIL_FROM", "ARGOS <onboarding@resend.dev>"),
-        "to": [destino],
-        "subject": f"Novo pedido nº {pedido_id} - {produto}"[:150],
-        "text": texto,
-        "reply_to": email,
-    }
-    threading.Thread(target=_enviar, args=(corpo,), daemon=True).start()
+    _disparar(destino, f"Novo pedido nº {pedido_id} - {produto}", texto, email)
+
+
+def avisar_contato(nome, email, mensagem):
+    """Aviso de nova mensagem enviada pelo formulário de contato (responder cai no e-mail do visitante)."""
+    destino = os.getenv("NOTIFY_EMAIL")
+    if not destino:
+        log.warning("NOTIFY_EMAIL ausente: aviso de contato não enviado.")
+        return
+    nome, email = _linha(nome), _linha(email)
+    texto = (
+        "Nova mensagem pelo formulário de contato do site ARGOS\n\n"
+        f"Nome: {nome}\n"
+        f"E-mail: {email}\n\n"
+        f"Mensagem:\n{str(mensagem).strip()}\n"
+    )
+    _disparar(destino, f"Novo contato no site - {nome}", texto, email)

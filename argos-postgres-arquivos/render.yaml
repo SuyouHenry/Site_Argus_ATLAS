@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: argos
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: GROQ_API_KEY
+        sync: false   # você informa no painel do Render (nunca no GitHub)
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: RESEND_API_KEY
+        sync: false   # chave da Resend, você informa no painel do Render
+      - key: NOTIFY_EMAIL
+        sync: false   # e-mail que recebe o aviso de pedidos, você informa no painel do Render
+      - key: DATABASE_URL
+        sync: false   # endereço do Postgres externo (ex.: Neon), você informa no painel do Render; sem ele o site usa SQLite local
+      - key: SECRET_KEY
+        generateValue: true   # o Render cria uma chave aleatória para os logins (cookie de sessão)

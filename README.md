@@ -28,7 +28,7 @@ No plano gratuito do Render o site "dorme" quando fica parado; o primeiro acesso
 
 - **Front end:** HTML5, CSS3 (`grid`, `flex`, layout responsivo) e JavaScript puro.
 - **Back end:** Python 3 com Flask, Flask-CORS e Flask-Limiter (limite de tentativas de login).
-- **Banco de dados:** SQLite.
+- **Banco de dados:** SQLite (local, arquivo `argos.db`) ou PostgreSQL externo (quando a variável `DATABASE_URL` está definida, usado na publicação para os dados não sumirem).
 - **Inteligência Artificial:** API da Groq (modelo `openai/gpt-oss-20b`, plano gratuito) para o chat, e MediaPipe Hands (`@mediapipe/tasks-vision`) para o reconhecimento de gestos pela câmera.
 - **E-mail de avisos:** API da Resend (aviso de novo pedido).
 - **Servidor de produção:** Gunicorn.
@@ -76,7 +76,8 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
 
 ```
 .
-├── app.py              # Servidor Flask: rotas da API, banco SQLite e entrega do site
+├── app.py              # Servidor Flask: rotas da API, esquema do banco e entrega do site
+├── banco.py            # Conexão com o banco: SQLite local ou PostgreSQL (DATABASE_URL)
 ├── chatbot.py          # Rota /api/chat e integração com a API da Groq
 ├── persona.py          # Persona e regras do assistente Argo
 ├── notificacao.py      # Aviso de novo pedido por e-mail (API da Resend)
@@ -97,7 +98,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
     └── argos-favicon.svg # Ícone da aba do navegador
 ```
 
-O arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução, com as tabelas `produtos`, `pedidos`, `mensagens` e `usuarios` e os 3 produtos de demonstração.
+Sem `DATABASE_URL`, o arquivo `argos.db` (SQLite) é criado automaticamente na primeira execução. Com `DATABASE_URL`, as mesmas tabelas são criadas no PostgreSQL informado. Nos dois casos são as tabelas `produtos`, `pedidos`, `mensagens` e `usuarios`, mais os 3 produtos de demonstração.
 
 ## 🚀 Instruções de instalação e execução
 
@@ -138,6 +139,7 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | `GROQ_API_KEY` | Chave da API da Groq (obrigatória para o chat) |
 | `GROQ_MODEL` | Modelo usado (padrão: `openai/gpt-oss-20b`) |
 | `CHAT_LIMITE` | Mensagens por IP a cada 10 minutos (padrão: 20) |
+| `DATABASE_URL` | Endereço de um PostgreSQL externo (ex.: `postgresql://usuario:senha@host/banco?sslmode=require`). Opcional: sem ela o site usa o SQLite local. Use na publicação para manter os dados |
 | `RESEND_API_KEY` | Chave da Resend, para o aviso de pedido por e-mail (opcional) |
 | `NOTIFY_EMAIL` | E-mail que recebe o aviso de pedido (opcional; sem ele o aviso não é enviado) |
 | `MAIL_FROM` | Remetente do aviso (padrão: `ARGOS <onboarding@resend.dev>`) |
@@ -162,7 +164,9 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 
 O arquivo `render.yaml` configura o deploy. No Render, use **New → Blueprint**, escolha este repositório e informe a `GROQ_API_KEY` no painel (e, para o aviso de pedidos, `RESEND_API_KEY` e `NOTIFY_EMAIL`). O `SECRET_KEY` é gerado automaticamente pelo Render. Conforme informado pelo painel, a branch atualmente vinculada ao Blueprint é `main`. A implantação automática depende do Auto-Deploy do Web Service; a sincronização de alterações no próprio Blueprint é controlada separadamente pelo Auto Sync. Como essas opções podem ser alteradas no painel, uma mudança na `main` não garante, por si só, a atualização do site. Mais detalhes em [DEPLOY.md](DEPLOY.md) e [BACKEND.md](BACKEND.md).
 
-No plano gratuito o disco é temporário: o `argos.db` é recriado a cada reinício, então pedidos, cadastros e mensagens de contato não são preservados. O e-mail de aviso de pedido é o único registro que fica.
+No plano gratuito o disco é temporário: sem `DATABASE_URL`, o `argos.db` é recriado a cada reinício e pedidos, cadastros e mensagens de contato se perdem.
+
+**Para guardar os dados (gratuito):** crie um banco PostgreSQL em um serviço como o Neon (https://neon.tech), copie o endereço de conexão (começa com `postgresql://`) e cadastre-o no painel do Render, em *Environment*, como `DATABASE_URL`. No primeiro início as tabelas e os produtos de demonstração são criados sozinhos. Nunca coloque esse endereço no GitHub, pois ele contém a senha do banco.
 
 ## ⚠️ Direitos Autorais e Licença (Copyright)
 **Todos os direitos reservados.**

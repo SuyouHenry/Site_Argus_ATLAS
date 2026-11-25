@@ -128,6 +128,8 @@ A branch `main` é a branch atualmente vinculada ao Blueprint, conforme a inform
 
 ## Persistência no Render
 
+**Persistência com PostgreSQL externo:** se a variável `DATABASE_URL` estiver definida no painel do Render (por exemplo, com o endereço de um banco gratuito do Neon), `banco.py` usa esse PostgreSQL no lugar do SQLite e os dados sobrevivem a reinícios e deploys. Sem a variável, vale o comportamento descrito abaixo.
+
 O serviço definido em `render.yaml` não declara disco persistente nem ponto de montagem para o SQLite. `argos.db` é criado no caminho local indicado pelo código, dentro do filesystem do serviço. No plano Free, a instância pode entrar em suspensão após 15 minutos sem tráfego; o filesystem local é efêmero e os dados não têm persistência garantida após suspensão, reinicializações, substituição da instância ou novos deploys. **Pedidos, usuários e mensagens podem ser perdidos** nesses eventos.
 
 Para demonstrar persistência de forma reprodutível com a configuração atual, execute localmente e verifique o mesmo arquivo SQLite após atualizar a página ou reiniciar o processo. Um disco persistente ou serviço de banco durável exigiria configuração e validação próprias; não está incluído no `render.yaml` atual.

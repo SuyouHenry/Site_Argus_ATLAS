@@ -1,7 +1,6 @@
 """Chatbot Argo (IA): rota /api/chat, integração com a API da Groq (plano gratuito) e uso da persona."""
 import json
 import os
-import sqlite3
 import time
 import urllib.error
 import urllib.request
@@ -10,6 +9,7 @@ from collections import defaultdict, deque
 from dotenv import load_dotenv
 from flask import Blueprint, current_app, jsonify, request
 
+import banco
 from persona import PERSONA
 
 load_dotenv()
@@ -37,14 +37,14 @@ def excedeu_limite(ip):
 
 def catalogo_texto():
     """Lê os produtos do banco para o Argo sempre falar do catálogo real."""
-    db = sqlite3.connect(current_app.config["DB_PATH"])
-    linhas = [
-        f"- {nome} ({tipo}): {desc} R$ {preco / 100:.2f}"
-        for nome, desc, preco, tipo in db.execute(
-            "SELECT nome, descricao, preco_centavos, tipo FROM produtos ORDER BY id"
-        )
-    ]
-    db.close()
+    db = banco.conectar(current_app.config["DB_PATH"])
+    try:
+        linhas = [
+            f"- {p['nome']} ({p['tipo']}): {p['descricao']} R$ {p['preco_centavos'] / 100:.2f}"
+            for p in db.execute("SELECT nome, descricao, preco_centavos, tipo FROM produtos ORDER BY id")
+        ]
+    finally:
+        db.close()
     return "\n".join(linhas)
 
 

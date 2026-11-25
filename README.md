@@ -144,6 +144,8 @@ Abra **http://localhost:5000** no navegador. O Flask também serve o site da pas
 | `NOTIFY_EMAIL` | E-mail que recebe o aviso de pedido (opcional; sem ele o aviso não é enviado) |
 | `MAIL_FROM` | Remetente do aviso (padrão: `ARGOS <onboarding@resend.dev>`) |
 
+**Aviso de pedido não chegou?** Abra os *Logs* do serviço no Render logo depois de fazer um pedido: o site registra "Aviso de pedido enviado" quando a Resend aceita o e-mail, ou o motivo da recusa. Com o remetente padrão de testes (`onboarding@resend.dev`), a Resend só entrega para o e-mail da própria conta dela, então `NOTIFY_EMAIL` precisa ser esse endereço (ou use um domínio verificado em `MAIL_FROM`). Veja também a pasta de spam.
+
 > Nunca envie o arquivo `.env` para o GitHub. O `.gitignore` já o protege. O `.env.example` contém apenas nomes e valores padrão/documentais, sem credenciais reais.
 
 ## 🔌 Rotas da API

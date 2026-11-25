@@ -9,10 +9,13 @@ import json
 import logging
 import os
 import threading
+import time
+import urllib.error
 import urllib.request
 
-log = logging.getLogger(__name__)
-API_URL = "https://api.resend.com/emails"
+# logger do Gunicorn: as mensagens (inclusive as de sucesso) aparecem nos Logs do Render
+log = logging.getLogger("gunicorn.error")
+API_URL = os.getenv("RESEND_API_URL", "https://api.resend.com/emails")
 
 
 def _brl(centavos):
@@ -39,11 +42,22 @@ def _enviar(corpo):
         },
         method="POST",
     )
-    try:
-        with urllib.request.urlopen(req, timeout=15):
-            pass
-    except Exception:  # o pedido já foi salvo; falha de e-mail não pode derrubá-lo
-        log.exception("Falha ao enviar o aviso de pedido por e-mail.")
+    # até 2 tentativas: repete só se a Resend estiver fora do ar (5xx) ou sem rede
+    for tentativa in (1, 2):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                log.info("Aviso de pedido enviado (HTTP %s): %s", resp.status, resp.read().decode("utf-8", "replace")[:200])
+            return
+        except urllib.error.HTTPError as e:
+            # a Resend explica o motivo no corpo da resposta (ex.: destinatário não permitido)
+            detalhe = e.read().decode("utf-8", "replace")[:500]
+            log.error("Resend recusou o aviso de pedido (HTTP %s): %s", e.code, detalhe)
+            if e.code < 500:
+                return  # erro nosso (chave, remetente, destinatário): repetir não adianta
+        except Exception:  # sem rede, tempo esgotado etc.; o pedido já foi salvo
+            log.exception("Falha de rede ao enviar o aviso de pedido.")
+        if tentativa == 1:
+            time.sleep(2)
 
 
 def avisar_pedido(pedido_id, produto, preco_centavos, qtd, nome, email):

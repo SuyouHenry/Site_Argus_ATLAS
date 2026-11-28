@@ -94,7 +94,7 @@ O chat do site usa a rota `POST /api/chat` (arquivo `chatbot.py`), que envia a c
     ├── camera.js       # Demonstração com câmera: reconhecimento dos gestos (MediaPipe)
     ├── robo.js         # Robô virtual que anda conforme o gesto
     ├── chat.js         # Janela do chat e envio das mensagens ao Argo
-    ├── argo-avatar.png # Avatar do Argo
+    ├── argo-avatar.svg # Avatar vetorial do Argô
     └── argos-favicon.svg # Ícone da aba do navegador
 ```
 

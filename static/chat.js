@@ -9,6 +9,16 @@
   const closeButton = document.getElementById("chatClose");
   const expandButton = document.getElementById("chatExpand");
   const avatarButton = document.getElementById("argoAvatar");
+  const avatarSvg = avatarButton.querySelector("svg");
+  const olhosAvatar = [
+    avatarSvg.querySelector("#argo-v5-eye-left"),
+    avatarSvg.querySelector("#argo-v5-eye-right"),
+  ];
+  const palpebrasAvatar = [
+    avatarSvg.querySelector("#argo-v5-eye-left-lid"),
+    avatarSvg.querySelector("#argo-v5-eye-right-lid"),
+  ];
+  const movimentoReduzido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const avatarReaction = document.getElementById("argoAvatarReaction");
   const panel = document.getElementById("chatBox");
   const authDialog = document.getElementById("auth-dialog");
@@ -39,6 +49,10 @@
   let cliquesAvatar = 0;
   let ultimaReacaoAvatar = null;
   let temporizadorReacaoAvatar = null;
+  let temporizadorPiscada = null;
+  let temporizadoresPiscada = [];
+  let quadroPiscada = null;
+  let avatarPiscando = false;
 
   function ocultarReacaoAvatar() {
     window.clearTimeout(temporizadorReacaoAvatar);
@@ -96,9 +110,77 @@
     );
   }
 
+  function restaurarOlhosAvatar() {
+    olhosAvatar.forEach((olho) => olho.style.removeProperty("opacity"));
+    palpebrasAvatar.forEach((palpebra) => {
+      palpebra.style.removeProperty("opacity");
+      palpebra.style.display = "none";
+      palpebra.style.visibility = "hidden";
+    });
+    avatarPiscando = false;
+  }
+
+  function pararPiscadasAvatar() {
+    window.clearTimeout(temporizadorPiscada);
+    temporizadorPiscada = null;
+    temporizadoresPiscada.forEach((temporizador) => window.clearTimeout(temporizador));
+    temporizadoresPiscada = [];
+    if (quadroPiscada !== null) {
+      window.cancelAnimationFrame(quadroPiscada);
+      quadroPiscada = null;
+    }
+    restaurarOlhosAvatar();
+  }
+
+  function executarPiscadaAvatar() {
+    if (
+      movimentoReduzido ||
+      !widget.classList.contains("is-open") ||
+      avatarPiscando
+    ) return;
+
+    avatarPiscando = true;
+    olhosAvatar.forEach((olho) => { olho.style.opacity = "0"; });
+    palpebrasAvatar.forEach((palpebra) => {
+      palpebra.style.display = "inline";
+      palpebra.style.visibility = "visible";
+      palpebra.style.opacity = "0";
+    });
+    quadroPiscada = window.requestAnimationFrame(() => {
+      quadroPiscada = null;
+      if (!widget.classList.contains("is-open")) return;
+      palpebrasAvatar.forEach((palpebra) => { palpebra.style.opacity = "1"; });
+    });
+
+    const ocultar = window.setTimeout(() => {
+      temporizadoresPiscada = temporizadoresPiscada.filter((id) => id !== ocultar);
+      if (!widget.classList.contains("is-open")) return;
+      palpebrasAvatar.forEach((palpebra) => { palpebra.style.opacity = "0"; });
+      const restaurar = window.setTimeout(() => {
+        temporizadoresPiscada = temporizadoresPiscada.filter((id) => id !== restaurar);
+        if (!widget.classList.contains("is-open")) return;
+        restaurarOlhosAvatar();
+      }, 65);
+      temporizadoresPiscada.push(restaurar);
+    }, 110);
+    temporizadoresPiscada.push(ocultar);
+  }
+
+  function agendarPiscadaAvatar() {
+    if (movimentoReduzido || !widget.classList.contains("is-open")) return;
+    temporizadorPiscada = window.setTimeout(() => {
+      temporizadorPiscada = null;
+      if (!widget.classList.contains("is-open")) return;
+      executarPiscadaAvatar();
+      agendarPiscadaAvatar();
+    }, 3500 + Math.random() * 3000);
+  }
+
   function abrirWidget() {
     atualizarNotificacao(false);
     widget.classList.add("is-open");
+    pararPiscadasAvatar();
+    agendarPiscadaAvatar();
     animarAvatar("abertura");
     launcher.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
@@ -118,6 +200,7 @@
   function fecharWidget(devolverFoco = true) {
     ocultarReacaoAvatar();
     widget.classList.remove("is-open");
+    pararPiscadasAvatar();
     widget.classList.remove("is-expanded");
     expandButton.setAttribute("aria-pressed", "false");
     expandButton.setAttribute("aria-label", "Expandir chat");
